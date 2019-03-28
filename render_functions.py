@@ -31,6 +31,9 @@ def render_all(con, entities, player, game_map, fov_recompute, root_console, scr
         draw_entity(con, entity, game_map.fov)
 
     con.draw_str(1, screen_height - 2, 'HP: {0:02}/{1:02}'.format(player.fighter.hp, player.fighter.max_hp))
+    hp_bar_length = 10
+    hp_bar_str = '[' + ('#'*int(player.fighter.hp / player.fighter.max_hp * hp_bar_length)).ljust(hp_bar_length)+ ']'
+    con.draw_str(10, screen_height - 2, hp_bar_str)
     root_console.blit(con, 0, 0, screen_width, screen_height, 0, 0)
 
 
