@@ -10,6 +10,13 @@ from input_handlers import handle_keys, handle_mouse
 from map_utils import GameMap, make_map
 from render_functions import render_all, clear_all, RenderOrder
 
+# Imports for testing items
+
+from components.item import Item
+from item_functions import cast_confuse
+
+# Imports for testing items
+
 def main():
     screen_width = 80
     screen_height = 50
@@ -61,6 +68,18 @@ def main():
 
     fighter_component = Fighter(hp=30, defense=2, power=5)
     inventory_component = Inventory(26)
+
+    #Testing section for new items
+    
+    for i in range(10):
+        item_component = Item(use_function=cast_confuse, targeting=True, targeting_message=Message(
+            'Left-click an enemy to confuse it, or right-click to cancel.', colors.get('light_cyan')))
+        item = Entity(0, 0, '#', colors.get('light_pink'), 'Confusion Scroll', render_order=RenderOrder.ITEM,
+                item=item_component)
+        inventory_component.add_item(item, colors)
+    
+    #End of testing section
+
     player = Entity(0, 0, '@', (255, 255, 255), 'Player', blocks=True, render_order=RenderOrder.ACTOR, fighter=fighter_component,
                     inventory=inventory_component)
     entities = [player]

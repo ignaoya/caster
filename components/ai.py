@@ -24,13 +24,19 @@ class ConfusedMonster:
 
     def take_turn(self, target, game_map, entities):
         results = []
+        monster = self.owner
 
         if self.number_of_turns > 0:
             random_x = self.owner.x + randint(0, 2) - 1
             random_y = self.owner.y + randint(0, 2) - 1
 
             if random_x != self.owner.x and random_y != self.owner.y:
-                self.owner.move_towards(random_x, random_y, game_map, entities)
+                random_target = [entity for entity in entities if entity.x == random_x and entity.y == random_y and entity.fighter]
+                if random_target:
+                    attack_results = monster.fighter.attack(random_target[0]) 
+                    results.extend(attack_results)
+                else:
+                    self.owner.move_towards(random_x, random_y, game_map, entities)
 
             self.number_of_turns -= 1
         else:
