@@ -1,11 +1,13 @@
 from game_messages import Message
 
 class Fighter:
-    def __init__(self, hp, defense, power):
+    def __init__(self, hp, defense, power, visible=True):
         self.max_hp = hp
         self.hp = hp
         self.defense = defense
         self.power = power
+        self.visible = visible
+        self.previous_color = None
 
     def take_damage(self, amount):
         results = []
@@ -16,6 +18,15 @@ class Fighter:
             results.append({'dead': self.owner})
 
         return results
+
+    def make_invisible(self):
+        self.visible = False
+        self.previous_color = self.owner.color
+        self.owner.color = (255, 200, 100)
+
+    def make_visible(self):
+        self.visible = True
+        self.owner.color = self.previous_color
 
     def heal(self, amount):
         self.hp += amount

@@ -7,7 +7,7 @@ class BasicMonster:
         results = []
         monster = self.owner
 
-        if game_map.fov[monster.x, monster.y]:
+        if game_map.fov[monster.x, monster.y] and target.fighter.visible:
             if monster.distance_to(target) >= 2:
                 monster.move_towards(target.x, target.y, game_map, entities)
 
@@ -31,9 +31,12 @@ class ConfusedMonster:
             random_y = self.owner.y + randint(0, 2) - 1
 
             if random_x != self.owner.x and random_y != self.owner.y:
-                random_target = [entity for entity in entities if entity.x == random_x and entity.y == random_y and entity.fighter]
+                random_target = None
+                for entity in entities:
+                    if entity.x == random_x and entity.y == random_y and entity.fighter:
+                        random_target = entity
                 if random_target:
-                    attack_results = monster.fighter.attack(random_target[0]) 
+                    attack_results = monster.fighter.attack(random_target) 
                     results.extend(attack_results)
                 else:
                     self.owner.move_towards(random_x, random_y, game_map, entities)

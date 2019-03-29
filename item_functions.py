@@ -106,3 +106,18 @@ def cast_confuse(*args, **kwargs):
                                                               colors.get('yellow'))})
 
     return results
+
+def cast_invisibility(*args, **kwargs):
+    entity = args[0]
+    colors = args[1]
+    turns = kwargs.get('turns')
+
+    results = []
+    if not entity.fighter.visible:
+        results.append({'consumed': False, 'invisible': False, 'message': Message('You are already invisible.', colors.get('yellow'))})
+    else:
+        entity.fighter.make_invisible()
+        results.append({'consumed': True, 'invisible': True, 'invisible_turns': turns, 'message': Message(
+                                            'You feel invisible!', colors.get('green'))})
+
+    return results

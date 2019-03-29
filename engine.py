@@ -13,7 +13,7 @@ from render_functions import render_all, clear_all, RenderOrder
 # Imports for testing items
 
 from components.item import Item
-from item_functions import cast_confuse
+from item_functions import cast_confuse, cast_invisibility
 
 # Imports for testing items
 
@@ -72,9 +72,8 @@ def main():
     #Testing section for new items
     
     for i in range(10):
-        item_component = Item(use_function=cast_confuse, targeting=True, targeting_message=Message(
-            'Left-click an enemy to confuse it, or right-click to cancel.', colors.get('light_cyan')))
-        item = Entity(0, 0, '#', colors.get('light_pink'), 'Confusion Scroll', render_order=RenderOrder.ITEM,
+        item_component = Item(use_function=cast_invisibility, turns=10)
+        item = Entity(0, 0, '#', colors.get('white'), 'Invisibility Scroll', render_order=RenderOrder.ITEM,
                 item=item_component)
         inventory_component.add_item(item, colors)
     
@@ -104,6 +103,8 @@ def main():
     previous_game_state = game_state
 
     targeting_item = None
+
+    invisible_turns = 0
 
     while not tdl.event.is_window_closed():
         if fov_recompute:
@@ -143,6 +144,7 @@ def main():
         inventory_index = action.get('inventory_index')
         exit = action.get('exit')
         fullscreen = action.get('fullscreen')
+        make_visible = False
 
         left_click = mouse_action.get('left_click')
         right_click = mouse_action.get('right_click')
@@ -150,6 +152,10 @@ def main():
         player_turn_results = []
 
         if move and game_state == GameStates.PLAYERS_TURN:
+            if not player.fighter.visible:
+                invisible_turns -= 1
+                if invisible_turns <= 0:
+                    make_visible = True
             dx, dy = move
             destination_x = player.x + dx
             destination_y = player.y + dy
@@ -159,6 +165,9 @@ def main():
                 if target:
                     attack_results = player.fighter.attack(target)
                     player_turn_results.extend(attack_results)
+                    if not player.fighter.visible:
+                        player.fighter.make_visible()
+                        message_log.add_message(Message('You are visible again!'))
                 else:
                     player.move(dx, dy)
                     fov_recompute = True
@@ -170,6 +179,10 @@ def main():
                 if entity.item and entity.x == player.x and entity.y == player.y:
                     pickup_results = player.inventory.add_item(entity, colors)
                     player_turn_results.extend(pickup_results)
+                    if not player.fighter.visible:
+                        invisible_turns -= 1
+                        if invisible_turns <= 0:
+                            make_visible = True
 
                     break
             else:
@@ -185,6 +198,11 @@ def main():
 
         if inventory_index is not None and previous_game_state != GameStates.PLAYER_DEAD and inventory_index < len(
                 player.inventory.items):
+            if not player.fighter.visible:
+                invisible_turns -= 1
+                if invisible_turns <= 0:
+                    make_visible = True
+            
             item = player.inventory.items[inventory_index]
 
             if game_state == GameStates.SHOW_INVENTORY:
@@ -213,6 +231,15 @@ def main():
         if fullscreen:
             tdl.set_fullscreen(not tdl.get_fullscreen())
 
+        if make_visible:
+            player.fighter.make_visible()
+
+            make_visible = False
+
+            message_log.add_message(Message('You are visible again!'))
+            game_state = GameStates.ENEMY_TURN
+
+
         for player_turn_result in player_turn_results:
             message = player_turn_result.get('message')
             dead_entity = player_turn_result.get('dead')
@@ -221,6 +248,11 @@ def main():
             item_dropped = player_turn_result.get('item_dropped')
             targeting = player_turn_result.get('targeting')
             targeting_cancelled = player_turn_result.get('targeting_cancelled')
+            invisible = player_turn_result.get('invisible')
+
+            if invisible:
+                invisible_turns = player_turn_result.get('invisible_turns')
+                game_state = GameStates.ENEMY_TURN
 
             if message:
                 message_log.add_message(message)
