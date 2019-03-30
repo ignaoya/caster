@@ -4,6 +4,7 @@ from tcod import image_load
 
 from loader_functions.initialize_new_game import get_constants, get_game_variables
 from loader_functions.data_loaders import load_game, save_game
+from map_utils import next_floor
 from menus import main_menu, message_box
 from death_functions import kill_monster, kill_player
 from entity import get_blocking_entities_at_location
@@ -136,10 +137,14 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
         mouse_action = handle_mouse(user_mouse_input)
 
         move = action.get('move')
+        wait = action.get('wait')
         pickup = action.get('pickup')
         show_inventory = action.get('show_inventory')
         drop_inventory = action.get('drop_inventory')
         inventory_index = action.get('inventory_index')
+        take_stairs = action.get('take_stairs')
+        level_up = action.get('level_up')
+        show_character_screen = action.get('show_character_screen')
         exit = action.get('exit')
         fullscreen = action.get('fullscreen')
         make_visible = False
@@ -172,6 +177,10 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
 
                 game_state = GameStates.ENEMY_TURN
 
+        elif wait:
+            player.fighter.heal(1)
+            game_state = GameStates.ENEMY_TURN
+
         elif pickup and game_state == GameStates.PLAYERS_TURN:
             for entity in entities:
                 if entity.item and entity.x == player.x and entity.y == player.y:
@@ -200,6 +209,32 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
             elif game_state == GameStates.DROP_INVENTORY:
                 player_turn_results.extend(player.inventory.drop_item(item, constants['colors']))
 
+        if take_stairs and game_state == GameStates.PLAYERS_TURN:
+            for entity in entities:
+                if entity.stairs and entity.x == player.x and entity.y == player.y:
+                    game_map, entities = next_floor(player, message_log, entity.stairs.floor, constants)
+                    fov_recompute = True
+                    con.clear()
+
+                    break
+            else:
+                message_log.add_message(Message('There are no stairs here.', constants['colors'].get('yellow')))
+
+        if level_up:
+            if level_up == 'hp':
+                player.fighter.max_hp += 20
+                player.fighter.hp += 20
+            elif level_up == 'str':
+                player.fighter.power += 1
+            elif level_up == 'def':
+                player.fighter.defense += 1
+
+            game_state = previous_game_state
+
+        if show_character_screen:
+            previous_game_state = game_state
+            game_state = GameStates.CHARACTER_SCREEN
+
         if game_state == GameStates.TARGETING:
             if left_click:
                 target_x, target_y = left_click
@@ -211,7 +246,7 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
                 player_turn_results.append({'targeting_cancelled': True})
 
         if exit:
-            if game_state in (GameStates.SHOW_INVENTORY, GameStates.DROP_INVENTORY):
+            if game_state in (GameStates.SHOW_INVENTORY, GameStates.DROP_INVENTORY, GameStates.CHARACTER_SCREEN):
                 game_state = previous_game_state
             elif game_state == GameStates.TARGETING:
                 player_turn_results.append({'targeting_cancelled': True})
@@ -239,6 +274,7 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
             item_dropped = player_turn_result.get('item_dropped')
             targeting = player_turn_result.get('targeting')
             targeting_cancelled = player_turn_result.get('targeting_cancelled')
+            xp = player_turn_result.get('xp')
             invisible = player_turn_result.get('invisible')
 
             if invisible:
@@ -303,6 +339,17 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
                 targeting_item = targeting
 
                 message_log.add_message(targeting_item.item.targeting_message)
+
+            if xp:
+                leveled_up = player.level.add_xp(xp)
+                message_log.add_message(Message('You gain {0} experience points.'.format(xp)))
+
+                if leveled_up:
+                    message_log.add_message(Message(
+                        'Your battle skills grow stronger! You reached level {0}'.format(player.level.current_level) + '!',
+                        constants['colors'].get('yellow')))
+                    previous_game_state = game_state
+                    game_state = GameStates.LEVEL_UP
 
         if game_state == GameStates.ENEMY_TURN:
             for entity in entities:
