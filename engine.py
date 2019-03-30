@@ -1,14 +1,12 @@
 import tdl
 
-from components.fighter import Fighter
-from components.inventory import Inventory
+from loader_functions.initialize_new_game import get_constants, get_game_variables
 from death_functions import kill_monster, kill_player
-from entity import Entity, get_blocking_entities_at_location
-from game_messages import Message, MessageLog 
+from entity import get_blocking_entities_at_location
+from game_messages import Message
 from game_states import GameStates
 from input_handlers import handle_keys, handle_mouse
-from map_utils import GameMap, make_map
-from render_functions import render_all, clear_all, RenderOrder
+from render_functions import render_all, clear_all
 
 # Imports for testing items
 
@@ -18,84 +16,17 @@ from item_functions import cast_confuse, cast_invisibility
 # Imports for testing items
 
 def main():
-    screen_width = 80
-    screen_height = 50
-
-    bar_width = 20
-    panel_height = 7
-    panel_y = screen_height - panel_height
-
-    message_x = bar_width + 2
-    message_width = screen_width - bar_width - 2
-    message_height = panel_height - 1
-
-    map_width = 80
-    map_height = 43
-
-    room_max_size = 10
-    room_min_size = 6
-    max_rooms = 30
-
-    fov_algorithm = 'BASIC'
-    fov_light_walls = True
-    fov_radius = 30
-
-    max_monsters_per_room = 3
-    max_items_per_room = 2
-
-    colors = {
-            'darkness': (0, 0, 10),
-            'dark_red': (191, 0, 0),
-            'dark_wall': (0,0,60),
-            'dark_ground': (30,30,100),
-            'light_wall': (130, 110, 50),
-            'light_ground': (200, 180, 50),
-            'desaturated_green': (63, 127, 63),
-            'darker_green': (0, 127, 0),
-            'white': (255, 255, 255),
-            'black': (0, 0, 0),
-            'red': (255, 0, 0),
-            'orange': (255, 127, 0),
-            'light_red': (255, 114, 114),
-            'darker_red': (127, 0, 0),
-            'violet': (127, 0, 255),
-            'yellow': (255, 255, 0),
-            'blue': (0, 0, 255),
-            'green': (0, 255, 0),
-            'light_cyan': (144, 255, 255),
-            'light_pink': (255, 144, 184),
-            }
-
-    fighter_component = Fighter(hp=30, defense=2, power=5)
-    inventory_component = Inventory(26)
-
-    #Testing section for new items
-    
-    for i in range(10):
-        item_component = Item(use_function=cast_invisibility, turns=10)
-        item = Entity(0, 0, '#', colors.get('white'), 'Invisibility Scroll', render_order=RenderOrder.ITEM,
-                item=item_component)
-        inventory_component.add_item(item, colors)
-    
-    #End of testing section
-
-    player = Entity(0, 0, '@', (255, 255, 255), 'Player', blocks=True, render_order=RenderOrder.ACTOR, fighter=fighter_component,
-                    inventory=inventory_component)
-    entities = [player]
+    constants = get_constants()
 
     tdl.set_font('resources/arial10x10.png', greyscale=True, altLayout=True)
 
-    root_console = tdl.init(screen_width, screen_height, title='Caster')
-    con = tdl.Console(screen_width, screen_height)
-    panel = tdl.Console(screen_width, panel_height)
+    root_console = tdl.init(constants['screen_width'], constants['screen_height'], constants['window_title'])
+    con = tdl.Console(constants['screen_width'], constants['screen_height'])
+    panel = tdl.Console(constants['screen_width'], constants['panel_height'])
 
-    game_map = GameMap(map_width, map_height)
-    make_map(game_map, max_rooms, room_min_size, room_max_size, map_width, map_height, player,
-             entities, max_monsters_per_room, max_items_per_room, colors)
-    
     fov_recompute = True
 
-    message_log = MessageLog(message_x, message_width, message_height)
+    player, entities, game_map, message_log, game_state = get_game_variables(constants)
 
     mouse_coordinates = (0,0)
 
@@ -108,10 +39,13 @@ def main():
 
     while not tdl.event.is_window_closed():
         if fov_recompute:
-            game_map.compute_fov(player.x, player.y, fov=fov_algorithm, radius=fov_radius, light_walls=fov_light_walls)
+            game_map.compute_fov(player.x, player.y, fov=constants['fov_algorithm'], radius=constants['fov_radius'],
+                    light_walls=constants['fov_light_walls'])
 
         render_all(con, panel, entities, player, game_map, fov_recompute, root_console, message_log, 
-                   screen_width, screen_height, bar_width, panel_height, panel_y, mouse_coordinates, colors, game_state)
+                   constants['screen_width'], constants['screen_height'], constants['bar_width'],
+                   constants['panel_height'], constants['panel_y'], mouse_coordinates, constants['colors'],
+                   game_state)
         tdl.flush()
 
         clear_all(con, entities)
@@ -177,16 +111,12 @@ def main():
         elif pickup and game_state == GameStates.PLAYERS_TURN:
             for entity in entities:
                 if entity.item and entity.x == player.x and entity.y == player.y:
-                    pickup_results = player.inventory.add_item(entity, colors)
+                    pickup_results = player.inventory.add_item(entity, constants['colors'])
                     player_turn_results.extend(pickup_results)
-                    if not player.fighter.visible:
-                        invisible_turns -= 1
-                        if invisible_turns <= 0:
-                            make_visible = True
 
                     break
             else:
-                message_log.add_message(Message('There is nothing here to pick up.', colors.get('yellow')))
+                message_log.add_message(Message('There is nothing here to pick up.', constants['colors'].get('yellow')))
 
         if show_inventory and game_state != GameStates.SHOW_INVENTORY:
             previous_game_state = game_state
@@ -198,23 +128,19 @@ def main():
 
         if inventory_index is not None and previous_game_state != GameStates.PLAYER_DEAD and inventory_index < len(
                 player.inventory.items):
-            if not player.fighter.visible:
-                invisible_turns -= 1
-                if invisible_turns <= 0:
-                    make_visible = True
             
             item = player.inventory.items[inventory_index]
 
             if game_state == GameStates.SHOW_INVENTORY:
-                player_turn_results.extend(player.inventory.use(item, colors, entities=entities, game_map=game_map))
+                player_turn_results.extend(player.inventory.use(item, constants['colors'], entities=entities, game_map=game_map))
             elif game_state == GameStates.DROP_INVENTORY:
-                player_turn_results.extend(player.inventory.drop_item(item, colors))
+                player_turn_results.extend(player.inventory.drop_item(item, constants['colors']))
 
         if game_state == GameStates.TARGETING:
             if left_click:
                 target_x, target_y = left_click
 
-                item_use_results = player.inventory.use(targeting_item, colors, entities=entities, game_map=game_map,
+                item_use_results = player.inventory.use(targeting_item, constants['colors'], entities=entities, game_map=game_map,
                                                         target_x=target_x, target_y=target_y)
                 player_turn_results.extend(item_use_results)
             elif right_click:
@@ -254,6 +180,15 @@ def main():
                 invisible_turns = player_turn_result.get('invisible_turns')
                 game_state = GameStates.ENEMY_TURN
 
+            if make_visible:
+                player.fighter.make_visible()
+
+                make_visible = False
+
+                message_log.add_message(Message('You are visible again!'))
+                game_state = GameStates.ENEMY_TURN
+
+
             if message:
                 message_log.add_message(message)
 
@@ -264,21 +199,34 @@ def main():
 
             if dead_entity:
                 if dead_entity == player:
-                    message, game_state = kill_player(dead_entity, colors)
+                    message, game_state = kill_player(dead_entity, constants['colors'])
                 else:
-                    message = kill_monster(dead_entity, colors)
+                    message = kill_monster(dead_entity, constants['colors'])
 
                 message_log.add_message(message)
 
             if item_added:
+                if not player.fighter.visible:
+                    invisible_turns -= 1
+                    if invisible_turns <= 0:
+                        make_visible = True
                 entities.remove(item_added)
 
                 game_state = GameStates.ENEMY_TURN
 
             if item_consumed:
+                if not player.fighter.visible:
+                    invisible_turns -= 1
+                    if invisible_turns <= 0:
+                        make_visible = True
+            
                 game_state = GameStates.ENEMY_TURN
 
             if item_dropped:
+                if not player.fighter.visible:
+                    invisible_turns -= 1
+                    if invisible_turns <= 0:
+                        make_visible = True
                 entities.append(item_dropped)
 
                 game_state = GameStates.ENEMY_TURN
