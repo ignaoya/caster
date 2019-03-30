@@ -1,11 +1,15 @@
 import tdl
 
+from tcod import image_load
+
 from loader_functions.initialize_new_game import get_constants, get_game_variables
+from loader_functions.data_loaders import load_game, save_game
+from menus import main_menu, message_box
 from death_functions import kill_monster, kill_player
 from entity import get_blocking_entities_at_location
 from game_messages import Message
 from game_states import GameStates
-from input_handlers import handle_keys, handle_mouse
+from input_handlers import handle_keys, handle_mouse, handle_main_menu
 from render_functions import render_all, clear_all
 
 # Imports for testing items
@@ -24,13 +28,73 @@ def main():
     con = tdl.Console(constants['screen_width'], constants['screen_height'])
     panel = tdl.Console(constants['screen_width'], constants['panel_height'])
 
+    player = None
+    entities = []
+    game_map = None
+    message_log = None
+    game_state = None
+
+    show_main_menu = True
+    show_load_error_message = False
+
+    main_menu_background_image = image_load('resources/menu_background1.png')
+
+    while not tdl.event.is_window_closed():
+        for event in tdl.event.get():
+            if event.type == 'KEYDOWN':
+                user_input = event
+                break
+        else:
+            user_input = None
+
+        if show_main_menu:
+            main_menu(con, root_console, main_menu_background_image, constants['screen_width'],
+                      constants['screen_height'], constants['colors'])
+
+            if show_load_error_message:
+                message_box(con, root_console, 'No save game to load', 50, constants['screen_width'],
+                            constants['screen_height'])
+
+            tdl.flush()
+
+            action = handle_main_menu(user_input)
+
+            new_game = action.get('new_game')
+            load_saved_game = action.get('load_game')
+            exit_game = action.get('exit')
+
+            if show_load_error_message and (new_game or load_saved_game or exit_game):
+                show_load_error_message = False
+            elif new_game:
+                player, entities, game_map, message_log, game_state = get_game_variables(constants)
+                game_state = GameStates.PLAYERS_TURN
+
+                show_main_menu = False
+            elif load_saved_game:
+                try:
+                    player, entities, game_map, message_log, game_state = load_game()
+                    show_main_menu = False
+                except FileNotFoundError:
+                    show_load_error_message = True
+            elif exit_game:
+                break
+
+        else:
+            root_console.clear()
+            con.clear()
+            panel.clear()
+            play_game(player, entities,  game_map, message_log, game_state, root_console, con, panel, constants)
+
+            show_main_menu = True
+
+def play_game(player, entities, game_map, message_log, game_state, root_console, con, panel, constants):
+    tdl.set_font('resources/arial10x10.png', greyscale=True, altLayout=True)
+
     fov_recompute = True
 
-    player, entities, game_map, message_log, game_state = get_game_variables(constants)
 
     mouse_coordinates = (0,0)
 
-    game_state = GameStates.PLAYERS_TURN
     previous_game_state = game_state
 
     targeting_item = None
@@ -152,6 +216,7 @@ def main():
             elif game_state == GameStates.TARGETING:
                 player_turn_results.append({'targeting_cancelled': True})
             else:
+                save_game(player, entities, game_map, message_log, game_state)
                 return True
 
         if fullscreen:
@@ -253,9 +318,9 @@ def main():
 
                         if dead_entity:
                             if dead_entity == player:
-                                message, game_state =  kill_player(dead_entity, colors)
+                                message, game_state =  kill_player(dead_entity, constants['colors'])
                             else:
-                                message = kill_monster(dead_entity, colors)
+                                message = kill_monster(dead_entity, constants['colors'])
 
                             message_log.add_message(message)
 
