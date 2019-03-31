@@ -7,6 +7,7 @@ from components.ai import BasicMonster
 from components.fighter import Fighter
 from components.item import Item
 from components.stairs import Stairs
+from components.fountain import Fountain
 from entity import Entity
 from item_functions import heal, cast_invisibility, cast_lightning, cast_fireball, cast_confuse
 from random_utils import from_dungeon_level, random_choice_from_dict
@@ -193,6 +194,14 @@ def make_map(game_map, max_rooms, room_min_size, room_max_size, map_width, map_h
     down_stairs = Entity(center_of_last_room_x, center_of_last_room_y, '>', (255,255,255), 'Stairs',
                         render_order=RenderOrder.STAIRS, stairs=stairs_component)
     entities.append(down_stairs)
+
+    # choose a random room from all rooms except the first and the last, to put a fountain of health
+    fountain_location = rooms[randint(1, len(rooms) - 2)]
+    (fountain_x, fountain_y) = fountain_location.center()
+    fountain_component = Fountain(20 * game_map.dungeon_level)
+    fountain = Entity(fountain_x, fountain_y, '+', colors.get('blue'), 'Fountain',
+            render_order=RenderOrder.ITEM, fountain=fountain_component)
+    entities.append(fountain)
 
 def next_floor(player, message_log, dungeon_level, constants):
     game_map = GameMap(constants['map_width'], constants['map_height'], dungeon_level)
