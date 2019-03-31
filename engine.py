@@ -178,7 +178,6 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
                 game_state = GameStates.ENEMY_TURN
 
         elif wait:
-            player.fighter.heal(1)
             game_state = GameStates.ENEMY_TURN
 
         elif pickup and game_state == GameStates.PLAYERS_TURN:
