@@ -8,6 +8,8 @@ from components.fighter import Fighter
 from components.item import Item
 from components.stairs import Stairs
 from components.fountain import Fountain
+from components.equipment import EquipmentSlots
+from components.equippable import Equippable
 from entity import Entity
 from item_functions import heal, cast_invisibility, cast_lightning, cast_fireball, cast_confuse
 from random_utils import from_dungeon_level, random_choice_from_dict
@@ -66,6 +68,8 @@ def place_entities(room, entities, dungeon_level, colors):
             }
     item_chances = {
             'healing_potion': 35, 
+            'sword': from_dungeon_level([[5,4]], dungeon_level),
+            'shield': from_dungeon_level([[15, 8]], dungeon_level),
             'lightning_scroll': from_dungeon_level([[25, 4]], dungeon_level), 
             'fireball_scroll': from_dungeon_level([[25, 6]], dungeon_level), 
             'confusion_scroll': from_dungeon_level([[10, 2]], dungeon_level),
@@ -106,6 +110,12 @@ def place_entities(room, entities, dungeon_level, colors):
                 item_component = Item(use_function=heal, amount=40)
                 item = Entity(x, y, '!', colors.get('violet'), 'Healing Potion', render_order=RenderOrder.ITEM,
                               item=item_component)
+            elif item_choice == 'sword':
+                equippable_component = Equippable(EquipmentSlots.MAIN_HAND, power_bonus=3)
+                item = Entity(x, y, '/', colors.get('sky'), 'Sword', equippable=equippable_component)
+            elif item_choice == 'shield':
+                equippable_component = Equippable(EquipmentSlots.OFF_HAND, defense_bonus=1)
+                item = Entity(x, y, '[', colors.get('darker_orange'), 'Shield', equippable=equippable_component)
             elif item_choice == 'invisibility_scroll':
                 item_component = Item(use_function=cast_invisibility, turns=10)
                 item = Entity(x, y, '#', colors.get('white'), 'Invisibility Scroll', render_order=RenderOrder.ITEM,
