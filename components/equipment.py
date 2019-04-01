@@ -26,7 +26,7 @@ class Equipment:
             bonus += self.main_hand.equippable.power_bonus
 
         if self.off_hand and self.off_hand.equippable:
-            bonus += self.main_hand.equippable.power_bonus
+            bonus += self.off_hand.equippable.power_bonus
 
         return bonus
         
@@ -38,7 +38,7 @@ class Equipment:
             bonus += self.main_hand.equippable.defense_bonus
 
         if self.off_hand and self.off_hand.equippable:
-            bonus += self.main_hand.equippable.defense_bonus
+            bonus += self.off_hand.equippable.defense_bonus
 
         return bonus
 

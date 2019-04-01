@@ -1,4 +1,5 @@
-from random import randint
+from random import randint, choice
+from entity import get_blocking_entities_at_location
 
 from game_messages import Message
 
@@ -15,7 +16,6 @@ class BasicMonster:
             self.last_target_y = target.y
             if monster.distance_to(target) >= 2:
                 monster.move_towards(target.x, target.y, game_map, entities)
-
             elif target.fighter.hp > 0:
                 attack_results = monster.fighter.attack(target)
                 results.extend(attack_results)

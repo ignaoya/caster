@@ -1,4 +1,5 @@
 import math
+from random import choice
 
 from components.item import Item
 
@@ -71,6 +72,30 @@ class Entity:
             if game_map.walkable[path[0][0], path[0][1]] and not get_blocking_entities_at_location(
                     entities, self.x + dx, self.y + dy):
                 self.move(dx, dy)
+            else:
+                if self.x == target_x:
+                    if self.y > target_y:
+                        self.move_towards(target_x + choice((1,-1)), target_y + 1, game_map, entities)
+                    else:
+                        self.move_towards(target_x + choice((1, -1)), target_y - 1, game_map, entities)
+                elif self.y == target_y:
+                    if self.x > target_x:
+                        self.move_towards(target_x + 1, target_y + choice((1, -1)), game_map, entities)
+                    else:
+                        self.move_towards(target_x - 1, target_y + choice((1, -1)), game_map, entities)
+                elif self.x > target_x and self.y > target_y:
+                    x, y = choice(((-1,0),(0,-1)))
+                    self.move_towards(self.x + x, self.y + y, game_map, entities)
+                elif self.x > target_x and self.y < target_y:
+                    x, y = choice(((-1,0),(0,1)))
+                    self.move_towards(self.x + x, self.y + y, game_map, entities)
+                elif self.x < target_x and self.y < target_y:
+                    x, y = choice(((1,0),(0,1)))
+                    self.move_towards(self.x + x, self.y + y, game_map, entities)
+                elif self.x < target_x and self.y > target_y:
+                    x, y = choice(((1,0),(0,-1)))
+                    self.move_towards(self.x + x, self.y + y, game_map, entities)
+
 
     def distance(self, x, y):
         return math.sqrt((x - self.x) ** 2 + (y - self.y) ** 2)
