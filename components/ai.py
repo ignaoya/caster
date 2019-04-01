@@ -3,18 +3,25 @@ from random import randint
 from game_messages import Message
 
 class BasicMonster:
+    def __init__(self):
+        self.last_target_x = None
+        self.last_target_y = None
     def take_turn(self, target, game_map, entities):
         results = []
         monster = self.owner
 
         if game_map.fov[monster.x, monster.y] and target.fighter.visible:
+            self.last_target_x = target.x
+            self.last_target_y = target.y
             if monster.distance_to(target) >= 2:
                 monster.move_towards(target.x, target.y, game_map, entities)
 
             elif target.fighter.hp > 0:
                 attack_results = monster.fighter.attack(target)
                 results.extend(attack_results)
-
+        elif self.last_target_x and self.last_target_y:
+            monster.move_towards(target.x, target.y, game_map, entities)
+            
         return results
 
 class ConfusedMonster:

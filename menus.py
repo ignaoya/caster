@@ -79,8 +79,14 @@ def character_screen(root_console, player, character_screen_width, character_scr
     window.draw_str(0, 3, 'Experience: {0}'.format(player.level.current_xp))
     window.draw_str(0, 4, 'Experience to Level Up: {0}'.format(player.level.experience_to_next_level))
     window.draw_str(0, 6, 'Maximum HP: {0}'.format(player.fighter.max_hp))
-    window.draw_str(0, 7, 'Attack: {0}'.format(player.fighter.power))
-    window.draw_str(0, 8, 'Defense: {0}'.format(player.fighter.defense))
+    if player.fighter.power != player.fighter.base_power:
+        window.draw_str(0, 7, 'Attack: {0}(+{1})'.format(player.fighter.base_power, player.equipment.power_bonus))
+    else:
+        window.draw_str(0, 7, 'Attack: {0}'.format(player.fighter.power))
+    if player.fighter.defense != player.fighter.base_defense:
+        window.draw_str(0, 8, 'Defense: {0}(+{1})'.format(player.fighter.base_defense, player.equipment.defense_bonus))
+    else:
+        window.draw_str(0, 8, 'Defense: {0}'.format(player.fighter.defense))
 
     x = screen_width // 2 - character_screen_width // 2
     y = screen_height // 2 - character_screen_height // 2
