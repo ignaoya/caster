@@ -223,6 +223,20 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
             elif game_state == GameStates.DROP_INVENTORY:
                 player_turn_results.extend(player.inventory.drop_item(item, constants['colors']))
 
+        if cast_spell:
+            message_log.add_message(Message('You begin a magic spell incantation.', constants['colors'].get('white')))
+            previous_game_state = game_state
+            game_state = GameStates.CASTING_SPELL
+
+        if letter:
+            if letter == '.':
+                message_log.add_message(Message(verse, constants['colors'].get('white')))
+                spell_results = player.caster.cast_spell(verse.split(), game_map, entities, constants['colors'])
+                verse = ''
+                player_turn_results.extend(spell_results)
+            else:
+                verse += letter
+
         if take_stairs and game_state == GameStates.PLAYERS_TURN:
             for entity in entities:
                 if entity.stairs and entity.x == player.x and entity.y == player.y:
@@ -248,23 +262,6 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
         if show_character_screen:
             previous_game_state = game_state
             game_state = GameStates.CHARACTER_SCREEN
-
-        if cast_spell:
-            message_log.add_message(Message('You begin a magic spell incantation.', constants['colors'].get('white')))
-            game_state = GameStates.CASTING_SPELL
-
-        if letter:
-            if letter == '.':
-                message_log.add_message(Message(verse, constants['colors'].get('white')))
-                verse = ''
-                player_turn_results.append({'spell_cast': True})
-            else:
-                verse += letter
-            if False:
-                spell_results = player.caster.cast_spell(verse, game_map, entities, constants['colors'])
-                player_turn_results.extend(spell_results)
-
-            #game_state = GameStates.ENEMY_TURN
 
         if game_state == GameStates.TARGETING:
             if left_click:

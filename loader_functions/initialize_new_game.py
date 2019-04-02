@@ -122,9 +122,8 @@ def get_game_variables(constants):
     #End of testing section
 
     player = Entity(0,0, '@', (255,255,255), 'Player', blocks=True, render_order=RenderOrder.ACTOR,
-            fighter=fighter_component, inventory=inventory_component, level=level_component,
+            fighter=fighter_component, caster=caster_component, inventory=inventory_component, level=level_component,
             equipment=equipment_component)
-    caster_component.owner = player
     entities = [player]
 
     equippable_component = Equippable(EquipmentSlots.MAIN_HAND, power_bonus=1)

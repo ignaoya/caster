@@ -160,4 +160,5 @@ def handle_spell_casting(user_input):
     if user_input:
         letter = user_input.char
         return {'letter': letter}
-
+    
+    return {}
