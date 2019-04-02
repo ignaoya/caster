@@ -1,7 +1,7 @@
 from game_states import GameStates
 
 
-def handle_keys(user_input, game_state):
+def handle_keys(user_input, game_state, *args):
     if user_input:
         if game_state == GameStates.PLAYERS_TURN:
             return handle_player_turn_keys(user_input)
@@ -15,6 +15,8 @@ def handle_keys(user_input, game_state):
             return handle_level_up_menu(user_input)
         elif game_state == GameStates.CHARACTER_SCREEN:
             return handle_character_screen(user_input)
+        elif game_state == GameStates.CASTING_SPELL:
+            return handle_spell_casting(user_input)
 
     return {}
 
@@ -56,6 +58,9 @@ def handle_player_turn_keys(user_input):
 
     elif key_char == 'c':
         return {'show_character_screen': True}
+
+    elif key_char == 's':
+        return {'cast_spell': True}
 
     if user_input.key == 'ENTER' and user_input.alt:
         # Alt-Enter: toggle full screen
@@ -150,3 +155,9 @@ def handle_character_screen(user_input):
         return {'exit': True}
 
     return {}
+
+def handle_spell_casting(user_input):
+    if user_input:
+        letter = user_input.char
+        return {'letter': letter}
+

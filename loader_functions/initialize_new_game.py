@@ -3,6 +3,7 @@ from components.equippable import Equippable
 from components.fighter import Fighter
 from components.inventory import Inventory
 from components.level import Level
+from components.caster import Caster
 
 from entity import Entity
 
@@ -109,6 +110,7 @@ def get_game_variables(constants):
     inventory_component = Inventory(26)
     level_component = Level()
     equipment_component = Equipment()
+    caster_component = Caster()
     #Testing section for new spells or items
     """
     for i in range(10):
@@ -122,6 +124,7 @@ def get_game_variables(constants):
     player = Entity(0,0, '@', (255,255,255), 'Player', blocks=True, render_order=RenderOrder.ACTOR,
             fighter=fighter_component, inventory=inventory_component, level=level_component,
             equipment=equipment_component)
+    caster_component.owner = player
     entities = [player]
 
     equippable_component = Equippable(EquipmentSlots.MAIN_HAND, power_bonus=1)

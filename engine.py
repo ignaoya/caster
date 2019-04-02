@@ -102,6 +102,8 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
 
     invisible_turns = 0
 
+    verse = ''
+
     while not tdl.event.is_window_closed():
         if fov_recompute:
             game_map.compute_fov(player.x, player.y, fov=constants['fov_algorithm'], radius=constants['fov_radius'],
@@ -134,6 +136,7 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
             continue
 
         action = handle_keys(user_input, game_state)
+
         mouse_action = handle_mouse(user_mouse_input)
 
         move = action.get('move')
@@ -145,6 +148,8 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
         take_stairs = action.get('take_stairs')
         level_up = action.get('level_up')
         show_character_screen = action.get('show_character_screen')
+        cast_spell = action.get('cast_spell')
+        letter = action.get('letter')
         exit = action.get('exit')
         fullscreen = action.get('fullscreen')
         make_visible = False
@@ -244,6 +249,23 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
             previous_game_state = game_state
             game_state = GameStates.CHARACTER_SCREEN
 
+        if cast_spell:
+            message_log.add_message(Message('You begin a magic spell incantation.', constants['colors'].get('white')))
+            game_state = GameStates.CASTING_SPELL
+
+        if letter:
+            if letter == '.':
+                message_log.add_message(Message(verse, constants['colors'].get('white')))
+                verse = ''
+                player_turn_results.append({'spell_cast': True})
+            else:
+                verse += letter
+            if False:
+                spell_results = player.caster.cast_spell(verse, game_map, entities, constants['colors'])
+                player_turn_results.extend(spell_results)
+
+            #game_state = GameStates.ENEMY_TURN
+
         if game_state == GameStates.TARGETING:
             if left_click:
                 target_x, target_y = left_click
@@ -286,6 +308,7 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
             targeting_cancelled = player_turn_result.get('targeting_cancelled')
             xp = player_turn_result.get('xp')
             invisible = player_turn_result.get('invisible')
+            spell_cast = player_turn_result.get('spell_cast')
 
             if invisible:
                 invisible_turns = player_turn_result.get('invisible_turns')
@@ -341,6 +364,15 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
                 entities.append(item_dropped)
 
                 game_state = GameStates.ENEMY_TURN
+
+            if spell_cast:
+                if not player.fighter.visible:
+                    invisible_turns -= 1
+                    if invisible_turns <= 0:
+                        make_visible = True
+
+                game_state = GameStates.ENEMY_TURN
+
 
             if equip:
                 equip_results = player.equipment.toggle_equip(equip)
