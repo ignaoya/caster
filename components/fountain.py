@@ -4,4 +4,5 @@ class Fountain:
 
     def drink(self, player):
         player.fighter.heal(1)
+        player.caster.regenerate(1)
         self.water -= 1

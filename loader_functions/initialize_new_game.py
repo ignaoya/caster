@@ -110,7 +110,7 @@ def get_game_variables(constants):
     inventory_component = Inventory(26)
     level_component = Level()
     equipment_component = Equipment()
-    caster_component = Caster()
+    caster_component = Caster(mana=5, focus=2)
     #Testing section for new spells or items
     """
     for i in range(10):

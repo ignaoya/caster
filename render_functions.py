@@ -79,7 +79,11 @@ def render_all(con, panel, entities, player, game_map, fov_recompute, root_conso
 
     render_bar(panel, 1, 1, bar_width, 'HP', player.fighter.hp, player.fighter.max_hp,
                colors.get('light_red'), colors.get('darker_red'), colors.get('white'))
-    panel.draw_str(1, 3, 'Dungeon Level: {0}'.format(game_map.dungeon_level), fg=colors.get('white'), bg=None)
+    render_bar(panel, 1, 2, bar_width, 'MP', player.caster.mana, player.caster.max_mana,
+               colors.get('blue'), colors.get('sky'), colors.get('white'))
+    render_bar(panel, 1, 3, bar_width, 'Focus', player.caster.focus, player.caster.max_focus,
+               colors.get('yellow'), colors.get('orange'), colors.get('black'))
+    panel.draw_str(1, 5, 'Dungeon Level: {0}'.format(game_map.dungeon_level), fg=colors.get('white'), bg=None)
 
     panel.draw_str(1, 0, get_names_under_mouse(mouse_coordinates, entities, game_map))
 

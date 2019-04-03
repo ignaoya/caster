@@ -230,6 +230,13 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
 
         if letter:
             if letter == '.':
+                magic_verse = []
+                for i in verse.split():
+                    if player.caster.mana > 0 and player.caster.focus > 0:
+                        player.caster.mana -= 1
+                        player.caster.focus -= 1
+                        magic_verse.append(i)
+                verse = ' '.join(magic_verse)
                 message_log.add_message(Message(verse, constants['colors'].get('white')))
                 spell_results = player.caster.cast_spell(verse.split(), game_map, entities, constants['colors'])
                 verse = ''
@@ -415,6 +422,8 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
                     game_state = GameStates.LEVEL_UP
 
         if game_state == GameStates.ENEMY_TURN:
+            if player.caster.focus < player.caster.max_focus:
+                player.caster.focus += player.caster.regeneration
             for entity in entities:
                 if entity.ai:
                     enemy_turn_results = entity.ai.take_turn(player, game_map, entities)
