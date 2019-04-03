@@ -39,11 +39,11 @@ def cast_lightning(*args, **kwargs):
                 closest_distance = distance
 
     if target:
-        results.append({'consumed': True, 'target': target, 'message': Message(
+        results.append({'target': target, 'message': Message(
             'A lightning bolt strikes the {0} with a loud thunder! The damage is {1}.'.format(target.name, damage))})
         results.extend(target.fighter.take_damage(damage))
     else:
-        results.append({'consumed': False, 'target': None, 'message': Message(
+        results.append({'target': None, 'message': Message(
             'No enemy is close enough to strike.', colors.get('red'))})
 
     return results

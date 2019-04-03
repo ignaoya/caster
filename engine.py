@@ -306,6 +306,7 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
             xp = player_turn_result.get('xp')
             invisible = player_turn_result.get('invisible')
             spell_cast = player_turn_result.get('spell_cast')
+            spell_failed = player_turn_result.get('spell_failed')
 
             if invisible:
                 invisible_turns = player_turn_result.get('invisible_turns')
@@ -363,6 +364,14 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
                 game_state = GameStates.ENEMY_TURN
 
             if spell_cast:
+                if not player.fighter.visible:
+                    invisible_turns -= 1
+                    if invisible_turns <= 0:
+                        make_visible = True
+
+                game_state = GameStates.ENEMY_TURN
+
+            if spell_failed:
                 if not player.fighter.visible:
                     invisible_turns -= 1
                     if invisible_turns <= 0:
