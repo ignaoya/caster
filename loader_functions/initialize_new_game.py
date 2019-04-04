@@ -4,6 +4,7 @@ from components.fighter import Fighter
 from components.inventory import Inventory
 from components.level import Level
 from components.caster import Caster
+from magic.lexicons import get_lexicon
 
 from entity import Entity
 
@@ -44,6 +45,8 @@ def get_constants():
 
     max_monsters_per_room = 3
     max_items_per_room = 3
+
+    lexicon = get_lexicon()
 
     colors = {
             'darkness': (0, 0, 10),
@@ -92,6 +95,7 @@ def get_constants():
             'fov_radius': fov_radius,
             'max_monsters_per_room': max_monsters_per_room,
             'max_items_per_room': max_items_per_room,
+            'lexicon': lexicon,
             'colors': colors,
             }
 
@@ -139,4 +143,4 @@ def get_game_variables(constants):
     
     game_state = GameStates.PLAYERS_TURN
 
-    return player, entities, game_map, message_log, game_state
+    return player, entities, game_map, message_log, game_state, constants['lexicon']

@@ -4,6 +4,7 @@ from tcod import image_load
 
 from loader_functions.initialize_new_game import get_constants, get_game_variables
 from loader_functions.data_loaders import load_game, save_game
+from magic.lexicons import translate
 from map_utils import next_floor
 from menus import main_menu, message_box
 from death_functions import kill_monster, kill_player
@@ -67,13 +68,13 @@ def main():
             if show_load_error_message and (new_game or load_saved_game or exit_game):
                 show_load_error_message = False
             elif new_game:
-                player, entities, game_map, message_log, game_state = get_game_variables(constants)
+                player, entities, game_map, message_log, game_state, lexicon = get_game_variables(constants)
                 game_state = GameStates.PLAYERS_TURN
 
                 show_main_menu = False
             elif load_saved_game:
                 try:
-                    player, entities, game_map, message_log, game_state = load_game()
+                    player, entities, game_map, message_log, game_state, lexicon = load_game()
                     show_main_menu = False
                 except FileNotFoundError:
                     show_load_error_message = True
@@ -84,11 +85,11 @@ def main():
             root_console.clear()
             con.clear()
             panel.clear()
-            play_game(player, entities,  game_map, message_log, game_state, root_console, con, panel, constants)
+            play_game(player, entities,  game_map, message_log, game_state, root_console, con, panel, lexicon, constants)
 
             show_main_menu = True
 
-def play_game(player, entities, game_map, message_log, game_state, root_console, con, panel, constants):
+def play_game(player, entities, game_map, message_log, game_state, root_console, con, panel, lexicon, constants):
     tdl.set_font('resources/arial10x10.png', greyscale=True, altLayout=True)
 
     fov_recompute = True
@@ -224,7 +225,9 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
                 player_turn_results.extend(player.inventory.drop_item(item, constants['colors']))
 
         if cast_spell:
+            words = ' '.join([i for i in lexicon])
             message_log.add_message(Message('You begin a magic spell incantation.', constants['colors'].get('white')))
+            message_log.add_message(Message(words, constants['colors'].get('white')))
             previous_game_state = game_state
             game_state = GameStates.CASTING_SPELL
 
@@ -236,7 +239,7 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
                         player.caster.mana -= 1
                         player.caster.focus -= 1
                         magic_verse.append(i)
-                verse = ' '.join(magic_verse)
+                verse = ' '.join(translate(magic_verse, lexicon))
                 message_log.add_message(Message(verse, constants['colors'].get('white')))
                 spell_results = player.caster.cast_spell(verse.split(), game_map, entities, constants['colors'])
                 verse = ''
@@ -292,7 +295,7 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
             elif game_state == GameStates.TARGETING:
                 player_turn_results.append({'targeting_cancelled': True})
             else:
-                save_game(player, entities, game_map, message_log, game_state)
+                save_game(player, entities, game_map, message_log, game_state, lexicon)
                 return True
 
         if fullscreen:
