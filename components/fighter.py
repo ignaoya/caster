@@ -71,10 +71,7 @@ class Fighter:
             results.append({'message': Message('{0} attacks {1} for {2} hit points.'.format(
                 self.owner.name.capitalize(), target.name, str(damage)))})
             results.extend(target.fighter.take_damage(damage))
-            if damage <= target.fighter.hp:
-                results.append({'xp': damage})
-            else:
-                results.append({'xp': target.fighter.hp})
+            results.append({'xp': damage})
 
         else:
             results.append({'message': Message('{0} attacks {1} but does no damage.'.format(

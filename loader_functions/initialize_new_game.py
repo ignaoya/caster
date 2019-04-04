@@ -46,8 +46,6 @@ def get_constants():
     max_monsters_per_room = 3
     max_items_per_room = 3
 
-    lexicon = get_lexicon()
-
     colors = {
             'darkness': (0, 0, 10),
             'dark_red': (191, 0, 0),
@@ -95,7 +93,6 @@ def get_constants():
             'fov_radius': fov_radius,
             'max_monsters_per_room': max_monsters_per_room,
             'max_items_per_room': max_items_per_room,
-            'lexicon': lexicon,
             'colors': colors,
             }
 
@@ -135,12 +132,15 @@ def get_game_variables(constants):
     player.inventory.add_item(dagger, constants['colors'])
     player.equipment.toggle_equip(dagger)
 
+    lexicon = get_lexicon()
+
     game_map = GameMap(constants['map_width'], constants['map_height'])
     make_map(game_map, constants['max_rooms'], constants['room_min_size'], constants['room_max_size'], 
-            constants['map_width'], constants['map_height'], player, entities, constants['colors'])
+            constants['map_width'], constants['map_height'], player, entities, constants['colors'], lexicon)
 
     message_log = MessageLog(constants['message_x'], constants['message_width'], constants['message_height'])
+
     
     game_state = GameStates.PLAYERS_TURN
 
-    return player, entities, game_map, message_log, game_state, constants['lexicon']
+    return player, entities, game_map, message_log, game_state, lexicon

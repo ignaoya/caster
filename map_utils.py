@@ -1,4 +1,4 @@
-from random import randint
+from random import randint, choice
 
 from tdl.map import Map
 
@@ -11,7 +11,7 @@ from components.fountain import Fountain
 from components.equipment import EquipmentSlots
 from components.equippable import Equippable
 from entity import Entity
-from item_functions import heal, cast_invisibility, cast_lightning, cast_fireball, cast_confuse
+from item_functions import heal, read, cast_invisibility, cast_lightning, cast_fireball, cast_confuse
 from random_utils import from_dungeon_level, random_choice_from_dict
 from game_messages import Message
 
@@ -55,7 +55,7 @@ def create_v_tunnel(game_map, y1, y2, x):
         game_map.walkable[x, y] = True
         game_map.transparent[x, y] = True
 
-def place_entities(room, entities, dungeon_level, colors):
+def place_entities(room, entities, dungeon_level, colors, lexicon):
     max_monsters_per_room = from_dungeon_level([[2,1], [3,4], [5,6]], dungeon_level)
     max_items_per_room = from_dungeon_level([[1,1], [2,4]], dungeon_level)
     # Get a random number of monsters
@@ -70,10 +70,7 @@ def place_entities(room, entities, dungeon_level, colors):
             'healing_potion': 35, 
             'sword': from_dungeon_level([[5,4]], dungeon_level),
             'shield': from_dungeon_level([[15, 8]], dungeon_level),
-            'lightning_scroll': from_dungeon_level([[25, 4]], dungeon_level), 
-            'fireball_scroll': from_dungeon_level([[25, 6]], dungeon_level), 
-            'confusion_scroll': from_dungeon_level([[10, 2]], dungeon_level),
-            'invisibility_scroll': from_dungeon_level([[25, 3]], dungeon_level),
+            'scroll': from_dungeon_level([[35, 1]], dungeon_level),
             }
 
     for i in range(number_of_monsters):
@@ -116,30 +113,19 @@ def place_entities(room, entities, dungeon_level, colors):
             elif item_choice == 'shield':
                 equippable_component = Equippable(EquipmentSlots.OFF_HAND, defense_bonus=1)
                 item = Entity(x, y, '[', colors.get('darker_orange'), 'Shield', equippable=equippable_component)
-            elif item_choice == 'invisibility_scroll':
-                item_component = Item(use_function=cast_invisibility, turns=10)
-                item = Entity(x, y, '#', colors.get('white'), 'Invisibility Scroll', render_order=RenderOrder.ITEM,
-                              item=item_component)
-            elif item_choice == 'fireball_scroll':
-                item_component = Item(use_function=cast_fireball, targeting=True, targeting_message=Message(
-                    'Left-click a target tile for the fireball, or right-click to cancel.', colors.get('light_cyan')),
-                            damage=25, radius=3)
-                item = Entity(x, y, '#', colors.get('red'), 'Fireball Scroll', render_order=RenderOrder.ITEM,
-                        item=item_component)
-            elif item_choice == 'confusion_scroll':
-                item_component = Item(use_function=cast_confuse, targeting=True, targeting_message=Message(
-                    'Left-click an enemy to confuse it, or right-click to cancel.', colors.get('light_cyan')))
-                item = Entity(x, y, '#', colors.get('light_pink'), 'Confusion Scroll', render_order=RenderOrder.ITEM,
-                        item=item_component)
-            else:
-                item_component = Item(use_function=cast_lightning, damage=40, maximum_range=5)
-                item = Entity(x, y, '#', colors.get('yellow'), 'Lightning Scroll', render_order=RenderOrder.ITEM,
+            elif item_choice == 'scroll':
+                if dungeon_level < 2:
+                    word = choice([i for i in lexicon.keys() if lexicon[i] in ['fireball', 'lightning', '1','2','3']])
+                else:
+                    word = choice(list(lexicon.keys()))
+                item_component = Item(use_function=read, lexicon=lexicon, word=word)
+                item = Entity(x, y, '#', colors.get('yellow'), 'Scroll', render_order=RenderOrder.ITEM,
                         item=item_component)
 
             entities.append(item)
 
 def make_map(game_map, max_rooms, room_min_size, room_max_size, map_width, map_height, player,
-             entities, colors):
+             entities, colors, lexicon):
     rooms = []
     num_rooms = 0
 
@@ -194,7 +180,7 @@ def make_map(game_map, max_rooms, room_min_size, room_max_size, map_width, map_h
                     create_v_tunnel(game_map, prev_y, new_y, prev_x)
                     create_h_tunnel(game_map, prev_x, new_x, new_y)
 
-            place_entities(new_room, entities, game_map.dungeon_level, colors)
+            place_entities(new_room, entities, game_map.dungeon_level, colors, lexicon)
 
             # finally, append the new room to the list
             rooms.append(new_room)
@@ -213,13 +199,13 @@ def make_map(game_map, max_rooms, room_min_size, room_max_size, map_width, map_h
             render_order=RenderOrder.ITEM, fountain=fountain_component)
     entities.append(fountain)
 
-def next_floor(player, message_log, dungeon_level, constants):
+def next_floor(player, message_log, dungeon_level, constants, lexicon):
     game_map = GameMap(constants['map_width'], constants['map_height'], dungeon_level)
     entities = [player]
 
     make_map(game_map, constants['max_rooms'], constants['room_min_size'],
              constants['room_max_size'], constants['map_width'], constants['map_height'], player,
-             entities, constants['colors'])
+             entities, constants['colors'], lexicon)
 
     player.fighter.heal(player.fighter.max_hp // 2)
 

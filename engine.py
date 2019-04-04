@@ -225,9 +225,7 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
                 player_turn_results.extend(player.inventory.drop_item(item, constants['colors']))
 
         if cast_spell:
-            words = ' '.join([i for i in lexicon])
             message_log.add_message(Message('You begin a magic spell incantation.', constants['colors'].get('white')))
-            message_log.add_message(Message(words, constants['colors'].get('white')))
             previous_game_state = game_state
             game_state = GameStates.CASTING_SPELL
 
@@ -250,7 +248,7 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
         if take_stairs and game_state == GameStates.PLAYERS_TURN:
             for entity in entities:
                 if entity.stairs and entity.x == player.x and entity.y == player.y:
-                    game_map, entities = next_floor(player, message_log, entity.stairs.floor, constants)
+                    game_map, entities = next_floor(player, message_log, entity.stairs.floor, constants, lexicon)
                     fov_recompute = True
                     con.clear()
 
