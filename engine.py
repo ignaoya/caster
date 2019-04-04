@@ -263,6 +263,12 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
                 player.fighter.base_power += 2
             elif level_up == 'def':
                 player.fighter.base_defense += 1
+            elif level_up == 'mp':
+                player.caster.max_mana += 2
+                player.caster.mana += 2
+            elif level_up == 'fcs':
+                player.caster.max_focus += 1
+                player.caster.focus += 1
 
             game_state = previous_game_state
 
@@ -311,6 +317,7 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
             targeting = player_turn_result.get('targeting')
             targeting_cancelled = player_turn_result.get('targeting_cancelled')
             xp = player_turn_result.get('xp')
+            magic_xp = player_turn_result.get('magic_xp')
             invisible = player_turn_result.get('invisible')
             spell_cast = player_turn_result.get('spell_cast')
             spell_failed = player_turn_result.get('spell_failed')
@@ -411,15 +418,26 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
                 message_log.add_message(targeting_item.item.targeting_message)
 
             if xp:
-                leveled_up = player.level.add_xp(xp)
+                leveled_up = player.level.add_fighter_xp(xp)
                 message_log.add_message(Message('You gain {0} experience points.'.format(xp)))
 
                 if leveled_up:
                     message_log.add_message(Message(
-                        'Your battle skills grow stronger! You reached level {0}'.format(player.level.current_level) + '!',
+                        'Your fighting skills improve! You reach combat level {0}'.format(player.level.fighter_level) + '!',
                         constants['colors'].get('yellow')))
                     previous_game_state = game_state
                     game_state = GameStates.LEVEL_UP
+
+            if magic_xp:
+                magic_leveled_up = player.level.add_caster_xp(magic_xp)
+                message_log.add_message(Message('You gain {0} magic experience points.'.format(magic_xp)))
+
+                if magic_leveled_up:
+                    message_log.add_message(Message(
+                        'Your casting skills improve! You reach magic level {0}'.format(player.level.caster_level) + '!',
+                        constants['colors'].get('yellow')))
+                    previous_game_state = game_state
+                    game_state = GameStates.MAGIC_LEVEL_UP
 
         if game_state == GameStates.ENEMY_TURN:
             if player.caster.focus < player.caster.max_focus:
@@ -431,9 +449,20 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
                     for enemy_turn_result in enemy_turn_results:
                         message = enemy_turn_result.get('message')
                         dead_entity = enemy_turn_result.get('dead')
+                        xp = enemy_turn_result.get('xp')
 
                         if message:
                             message_log.add_message(message)
+
+                        if xp:
+                            leveled_up = player.level.add_fighter_xp(xp)
+
+                            if leveled_up:
+                                message_log.add_message(Message(
+                                    'Your fighting skills improve! You reach combat level {0}'.format(player.level.fighter_level) + '!',
+                                    constants['colors'].get('yellow')))
+                                previous_game_state = game_state
+                                game_state = GameStates.LEVEL_UP
 
                         if dead_entity:
                             if dead_entity == player:
@@ -449,7 +478,10 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
                     if game_state == GameStates.PLAYER_DEAD:
                         break
             else:
-                game_state = GameStates.PLAYERS_TURN
+                if game_state == GameStates.LEVEL_UP:
+                    previous_game_state = GameStates.PLAYERS_TURN
+                else:
+                    game_state = GameStates.PLAYERS_TURN
 
 if __name__ == '__main__':
     main()

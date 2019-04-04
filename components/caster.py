@@ -2,13 +2,12 @@ from magic.spell_functions import cast_fireball, cast_lightning
 from game_messages import Message
 
 class Caster:
-    def __init__(self, mana, focus, regeneration=1, xp=0):
+    def __init__(self, mana, focus, regeneration=1):
         self.mana = mana
         self.max_mana = mana
         self.focus = focus
         self.max_focus = focus
         self.regeneration = regeneration
-        self.xp = xp
 
 
     def regenerate(self, amount):
@@ -43,26 +42,34 @@ class Caster:
                         x += 1
                     elif i == 'w':
                         x -= 1
-                results.append({'spell_cast': True, 'magic_xp': power * len(directions)})
+                # The order in which results are appended or extended is very important for the game logic, I'm not
+                # sure why, but 'spell_cast' should be added first and 'magic_xp' last. Otherwise there are some weird
+                # bugs enabled. I should try to simplify the logic eventually.
+                results.append({'spell_cast': True})
                 results.extend(cast_fireball(verse, colors, entities=entities, game_map=game_map, damage=power, radius=3,
                               target_x=self.owner.x + x, target_y=self.owner.y + y))
+                results.append({'magic_xp': power + (power * len(directions))})
                 if not results[1].get('consumed'):
                     results.append({'message': Message('The fireball returns to you and deals {0} damage.'.format(
                                                       power * len(directions)), colors.get('red'))})
                     results.extend(self.owner.fighter.take_damage(power * len(directions)))
+                    results.append({'magic_xp': power})
+
 
             elif verse[0] == 'lightning':
                 if len(verse) > 1:
                     if str.isdigit(verse[1]):
                         maximum_range = int(verse[1])
-                        results.append({'spell_cast': True, 'magic_xp': 20 * maximum_range})
+                        results.append({'spell_cast': True})
                         results.extend(cast_lightning(self.owner, colors, entities=entities, game_map=game_map, damage=40,
                                        maximum_range=maximum_range))
                         if not any(result.get('target') for result in results):
-                            results.append({'spell_cast': True, 'magic_xp': 10 * maximum_range})
+                            results.append({'magic_xp': 10 * maximum_range})
                             results.extend(self.owner.fighter.take_damage(10 * maximum_range))
                             results.append({'message': Message('The spell hits you instead for {0} damage.'.format(10 * maximum_range),
                                                        colors.get('red'))})
+                        else:
+                            results.append({'magic_xp': 20 * maximum_range})
                     else:
                         results.append({'spell_cast': True, 'magic_xp': 10 * len(verse)})
                         results.extend(self.owner.fighter.take_damage(10 * len(verse)))

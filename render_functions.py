@@ -2,7 +2,7 @@ from enum import Enum
 
 from game_states import GameStates
 
-from menus import character_screen, inventory_menu, level_up_menu
+from menus import character_screen, inventory_menu, level_up_menu, magic_level_up_menu
 
 class RenderOrder(Enum):
     STAIRS = 1
@@ -100,8 +100,11 @@ def render_all(con, panel, entities, player, game_map, fov_recompute, root_conso
     elif game_state == GameStates.LEVEL_UP:
         level_up_menu(con, root_console, 'Level Up! Choose a stat to raise:', player, 40, screen_width, screen_height)
 
+    elif game_state == GameStates.MAGIC_LEVEL_UP:
+        magic_level_up_menu(con, root_console, 'Magic Level Up! Choose a stat to raise:', player, 40, screen_width, screen_height)
+
     elif game_state == GameStates.CHARACTER_SCREEN:
-        character_screen(root_console, player, 30, 10, screen_width, screen_height)
+        character_screen(root_console, player, 60, 11, screen_width, screen_height)
 
 
 def clear_all(con, entities):

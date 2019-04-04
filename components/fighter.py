@@ -43,7 +43,7 @@ class Fighter:
         self.hp -= amount
 
         if self.hp <= 0:
-            results.append({'dead': self.owner, 'xp': self.xp})
+            results.append({'dead': self.owner})
 
         return results
 
@@ -71,6 +71,11 @@ class Fighter:
             results.append({'message': Message('{0} attacks {1} for {2} hit points.'.format(
                 self.owner.name.capitalize(), target.name, str(damage)))})
             results.extend(target.fighter.take_damage(damage))
+            if damage <= target.fighter.hp:
+                results.append({'xp': damage})
+            else:
+                results.append({'xp': target.fighter.hp})
+
         else:
             results.append({'message': Message('{0} attacks {1} but does no damage.'.format(
                 self.owner.name.capitalize(), target.name))})

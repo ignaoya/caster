@@ -13,6 +13,8 @@ def handle_keys(user_input, game_state, *args):
             return handle_inventory_keys(user_input)
         elif game_state == GameStates.LEVEL_UP:
             return handle_level_up_menu(user_input)
+        elif game_state == GameStates.MAGIC_LEVEL_UP:
+            return handle_magic_level_up_menu(user_input)
         elif game_state == GameStates.CHARACTER_SCREEN:
             return handle_character_screen(user_input)
         elif game_state == GameStates.CASTING_SPELL:
@@ -147,6 +149,17 @@ def handle_level_up_menu(user_input):
             return {'level_up': 'str'}
         elif key_char == 'c':
             return {'level_up': 'def'}
+
+    return {}
+
+def handle_magic_level_up_menu(user_input):
+    if user_input:
+        key_char = user_input.char
+
+        if key_char == 'a':
+            return {'level_up': 'mp'}
+        elif key_char == 'b':
+            return {'level_up': 'fcs'}
 
     return {}
 

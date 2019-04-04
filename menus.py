@@ -68,6 +68,12 @@ def level_up_menu(con, root, header, player, menu_width, screen_width, screen_he
 
     menu(con, root, header, options, menu_width, screen_width, screen_height)
 
+def magic_level_up_menu(con, root, header, player, menu_width, screen_width, screen_height):
+    options = ['Mana (+2 MP, from {0})'.format(player.caster.max_mana),
+               'Focus (+1 focus, from {0})'.format(player.caster.max_focus)]
+
+    menu(con, root, header, options, menu_width, screen_width, screen_height)
+
 def character_screen(root_console, player, character_screen_width, character_screen_height, screen_width,
                      screen_height):
     window = tdl.Console(character_screen_width, character_screen_height)
@@ -75,18 +81,25 @@ def character_screen(root_console, player, character_screen_width, character_scr
     window.draw_rect(0, 0, character_screen_width, character_screen_height, None, fg=(255,255,255), bg=None)
 
     window.draw_str(0, 1, 'Character Information')
-    window.draw_str(0, 2, 'Level: {0}'.format(player.level.current_level))
-    window.draw_str(0, 3, 'Experience: {0}'.format(player.level.current_xp))
-    window.draw_str(0, 4, 'Experience to Level Up: {0}'.format(player.level.experience_to_next_level))
-    window.draw_str(0, 6, 'Maximum HP: {0}'.format(player.fighter.max_hp))
+    window.draw_str(0, 2, 'Fighting')
+    window.draw_str(0, 3, 'Level: {0}'.format(player.level.fighter_level))
+    window.draw_str(0, 4, 'Experience: {0}'.format(player.level.fighter_xp))
+    window.draw_str(0, 5, 'Experience to Level Up: {0}'.format(player.level.experience_to_next_fighter_level))
+    window.draw_str(0, 7, 'Maximum HP: {0}'.format(player.fighter.max_hp))
     if player.fighter.power != player.fighter.base_power:
-        window.draw_str(0, 7, 'Attack: {0}(+{1})'.format(player.fighter.base_power, player.equipment.power_bonus))
+        window.draw_str(0, 8, 'Attack: {0}(+{1})'.format(player.fighter.base_power, player.equipment.power_bonus))
     else:
-        window.draw_str(0, 7, 'Attack: {0}'.format(player.fighter.power))
+        window.draw_str(0, 8, 'Attack: {0}'.format(player.fighter.power))
     if player.fighter.defense != player.fighter.base_defense:
-        window.draw_str(0, 8, 'Defense: {0}(+{1})'.format(player.fighter.base_defense, player.equipment.defense_bonus))
+        window.draw_str(0, 9, 'Defense: {0}(+{1})'.format(player.fighter.base_defense, player.equipment.defense_bonus))
     else:
-        window.draw_str(0, 8, 'Defense: {0}'.format(player.fighter.defense))
+        window.draw_str(0, 9, 'Defense: {0}'.format(player.fighter.defense))
+    window.draw_str(31, 2, 'Spellcasting')
+    window.draw_str(31, 3, 'Level: {0}'.format(player.level.caster_level))
+    window.draw_str(31, 4, 'Experience: {0}'.format(player.level.caster_xp))
+    window.draw_str(31, 5, 'Experience to Level Up: {0}'.format(player.level.experience_to_next_caster_level))
+    window.draw_str(31, 7, 'Maximum MP: {0}'.format(player.caster.max_mana))
+    window.draw_str(31, 8, 'Focus: {0}'.format(player.caster.max_focus))
 
     x = screen_width // 2 - character_screen_width // 2
     y = screen_height // 2 - character_screen_height // 2
