@@ -149,6 +149,7 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
         take_stairs = action.get('take_stairs')
         level_up = action.get('level_up')
         show_character_screen = action.get('show_character_screen')
+        look_around = action.get('look_around')
         cast_spell = action.get('cast_spell')
         letter = action.get('letter')
         exit = action.get('exit')
@@ -223,6 +224,10 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
                 player_turn_results.extend(player.inventory.use(item, constants['colors'], entities=entities, game_map=game_map))
             elif game_state == GameStates.DROP_INVENTORY:
                 player_turn_results.extend(player.inventory.drop_item(item, constants['colors']))
+
+        if look_around:
+            seen = ', '.join([entity.name for entity in entities if game_map.fov[entity.x, entity.y] and entity is not player])
+            message_log.add_message(Message('You see: {0}.'.format(seen), constants['colors'].get('white')))
 
         if cast_spell:
             message_log.add_message(Message('You begin a magic spell incantation.', constants['colors'].get('white')))

@@ -64,6 +64,9 @@ def handle_player_turn_keys(user_input):
     elif key_char == 's':
         return {'cast_spell': True}
 
+    elif key_char == 'o':
+        return {'look_around': True}
+
     if user_input.key == 'ENTER' and user_input.alt:
         # Alt-Enter: toggle full screen
         return {'fullscreen': True}
