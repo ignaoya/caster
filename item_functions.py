@@ -5,13 +5,14 @@ from components.ai import ConfusedMonster
 
 def read(*args, **kwargs):
     lexicon = kwargs.get('lexicon')
-    word = kwargs.get('word')
+    words = kwargs.get('word')
     colors = args[1]
 
     results = []
 
-    results.append({'message': Message('According to the ancient ainur, the magic word for {0} is {1}'.format(
-                                lexicon[word], word), colors.get('white'))})
+    for word in words:
+        results.append({'message': Message('The magic word for {0} is {1}'.format(
+                                    lexicon[word], word), colors.get('white'))})
 
     return results
     

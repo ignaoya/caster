@@ -1,6 +1,6 @@
 from random import choice, randint
 
-word_list = ['fireball', 'lightning', 'burn', 'n', 's', 'e', 'w', '1', '2', '3', '4', '5']
+word_list = ['fireball', 'lightning', 'invisibility', 'burn', 'north', 'south', 'east', 'west', '1', '2', '3', '4', '5']
 
 def get_lexicon(word_list=word_list):
     vocals = 'aeiou'
@@ -15,7 +15,7 @@ def get_lexicon(word_list=word_list):
     return lexicon
 
 def get_word(meaning, vocals, consonants, digits, p_vocal, lexicon):
-    if meaning in ['n', 's', 'e', 'w']:
+    if meaning in ['north', 'south', 'east', 'west']:
         length = 1
     elif meaning in digits:
         length = randint(1, 3)

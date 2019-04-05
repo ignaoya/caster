@@ -18,7 +18,6 @@ class Caster:
     
     def cast_spell(self, verse, game_map, entities, colors):
         results = []
-        magic_verse = []
         if verse:
             if verse[0] == 'fireball':
                 # The player can direct the location of the fireball by writing the initials of the cardinal locations
@@ -28,19 +27,19 @@ class Caster:
                 # power of 40, he would type "fireball n n n e e e burn burn."
                 # Note that the order of the operands is irrelevant except for 'fireball', which has to be the first.
                 # the above could also be written as "fireball burn n e n burn e e n."
-                cardinal = ['n', 's', 'e', 'w']
+                cardinal = ['north', 'south', 'east', 'west', 'n', 's', 'e', 'w']
                 directions = [i for i in verse if i in cardinal] 
                 power = 20 + (10 * len([i for i in verse if i == 'burn']))
                 x = 0
                 y = 0
                 for i in directions:
-                    if i == 'n':
+                    if i in ['north', 'n']:
                         y -= 1
-                    elif i == 's':
+                    elif i in ['south', 's']:
                         y += 1
-                    elif i == 'e':
+                    elif i in ['east', 'e']:
                         x += 1
-                    elif i == 'w':
+                    elif i in ['west', 'w']:
                         x -= 1
                 # The order in which results are appended or extended is very important for the game logic, I'm not
                 # sure why, but 'spell_cast' should be added first and 'magic_xp' last. Otherwise there are some weird
@@ -60,27 +59,51 @@ class Caster:
                 if len(verse) > 1:
                     if str.isdigit(verse[1]):
                         maximum_range = int(verse[1])
+                        damage = 10 * maximum_range
                         results.append({'spell_cast': True})
-                        results.extend(cast_lightning(self.owner, colors, entities=entities, game_map=game_map, damage=40,
+                        results.extend(cast_lightning(self.owner, colors, entities=entities, game_map=game_map, damage=damage,
                                        maximum_range=maximum_range))
                         if not any(result.get('target') for result in results):
-                            results.append({'magic_xp': 10 * maximum_range})
-                            results.extend(self.owner.fighter.take_damage(10 * maximum_range))
+                            results.append({'magic_xp': damage})
+                            results.extend(self.owner.fighter.take_damage(damage))
                             results.append({'message': Message('The spell hits you instead for {0} damage.'.format(10 * maximum_range),
                                                        colors.get('red'))})
                         else:
                             results.append({'magic_xp': 20 * maximum_range})
                     else:
-                        results.append({'spell_cast': True, 'magic_xp': 10 * len(verse)})
+                        results.append({'spell_cast': True, 'magic_xp': 10})
                         results.extend(self.owner.fighter.take_damage(10 * len(verse)))
                         results.append({'message': Message('For a wrong word, the electric charge hits you for {0} damage.'.format(
                                                            10 * len(verse)), colors.get('red'))})
                 else:
-                    results.append({'spell_cast': True, 'magic_xp': 10})
-                    results.extend(self.owner.fighter.take_damage(10))
-                    results.append({'message': Message('For lacking a word, the electric charge hits you for {0} damage.'.format(
-                                                       10), colors.get('red'))})
+                    maximum_range = 1
+                    damage = 10
+                    results.append({'spell_cast': True})
+                    results.extend(cast_lightning(self.owner, colors, entities=entities, game_map=game_map, damage=damage,
+                                   maximum_range=maximum_range))
+                    if not any(result.get('target') for result in results):
+                        results.append({'magic_xp': 10})
+                        results.extend(self.owner.fighter.take_damage(10))
+                        results.append({'message': Message('The spell hits you instead for {0} damage.'.format(10),
+                                                   colors.get('red'))})
+                    else:
+                        results.append({'magic_xp': 20})
                     
+            elif verse[0] == 'invisibility':
+                if len(verse) > 1 and str.isdigit(verse[1]):
+                    entity = self.owner
+                    turns = 5 * int(verse[1])
+                    results.append({'spell_cast': True})
+                    results.extend(cast_invisibility(entity, colors, turns=turns))
+                    if any(result.get('invisible') for result in results):
+                        results.append({'magic_xp': 5 * turns})
+                else:
+                    entity = self.owner
+                    turns = 5
+                    results.append({'spell_cast': True})
+                    results.extend(cast_invisibility(entity, colors, turns=turns))
+                    if any(result.get('invisible') for result in results):
+                        results.append({'magic_xp': 25})
             else:
                 results.append({'spell_failed': True, 'message': Message('You fail to invoke the proper words. Nothing happens.',
                                                                     colors.get('yellow'))})
