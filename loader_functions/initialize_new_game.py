@@ -1,3 +1,4 @@
+from random import choice
 from components.equipment import Equipment
 from components.equippable import Equippable
 from components.fighter import Fighter
@@ -46,6 +47,58 @@ def get_constants():
     max_monsters_per_room = 3
     max_items_per_room = 3
 
+    colors = [
+            (191, 0, 0),
+            (30,30,100),
+            (130, 110, 50),
+            (200, 180, 50),
+            (63, 127, 63),
+            (0, 127, 0),
+            (255, 255, 255),
+            (255, 0, 0),
+            (255, 127, 0),
+            (255, 114, 114),
+            (127, 0, 0),
+            (127, 0, 255),
+            (255, 255, 0),
+            (0, 0, 255),
+            (0, 255, 0),
+            (144, 255, 255),
+            (255, 144, 184),
+            (255, 255, 114),
+            (184, 114, 255),
+            (0, 191, 255),
+            (127, 63, 0)
+            ]
+
+    colors = {
+            'darkness': (0, 0, 10),
+            'dark_red': choice(base_colors),
+            'dark_wall': (0,0,60),
+            'dark_ground': choice(base_colors),
+            'light_wall': choice(base_colors),
+            'light_ground': choice(base_colors),
+            'desaturated_green': choice(base_colors),
+            'darker_green': choice(base_colors),
+            'white': (255, 255, 255),
+            'black': (0, 0, 0),
+            'red': (255, 0, 0),
+            'orange': choice(base_colors),
+            'light_red': choice(base_colors),
+            'darker_red': choice(base_colors),
+            'violet': choice(base_colors),
+            'yellow': choice(base_colors),
+            'blue': choice(base_colors),
+            'green': choice(base_colors),
+            'light_cyan': choice(base_colors),
+            'light_pink': choice(base_colors),
+            'light_yellow': choice(base_colors),
+            'light_violet': choice(base_colors),
+            'sky': choice(base_colors),
+            'darker_orange': choice(base_colors),
+                }
+
+    """
     colors = {
             'darkness': (0, 0, 10),
             'dark_red': (191, 0, 0),
@@ -72,6 +125,7 @@ def get_constants():
             'sky': (0, 191, 255),
             'darker_orange': (127, 63, 0),
             }
+    """
 
     constants = {
             'window_title': window_title,
