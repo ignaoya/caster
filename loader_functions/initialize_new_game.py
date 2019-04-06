@@ -1,4 +1,4 @@
-from random import choice
+from random import randint 
 from components.equipment import Equipment
 from components.equippable import Equippable
 from components.fighter import Fighter
@@ -47,15 +47,13 @@ def get_constants():
     max_monsters_per_room = 3
     max_items_per_room = 3
 
-    colors = [
+    base_colors = [
             (191, 0, 0),
             (30,30,100),
             (130, 110, 50),
             (200, 180, 50),
             (63, 127, 63),
             (0, 127, 0),
-            (255, 255, 255),
-            (255, 0, 0),
             (255, 127, 0),
             (255, 114, 114),
             (127, 0, 0),
@@ -71,34 +69,7 @@ def get_constants():
             (127, 63, 0)
             ]
 
-    colors = {
-            'darkness': (0, 0, 10),
-            'dark_red': choice(base_colors),
-            'dark_wall': (0,0,60),
-            'dark_ground': choice(base_colors),
-            'light_wall': choice(base_colors),
-            'light_ground': choice(base_colors),
-            'desaturated_green': choice(base_colors),
-            'darker_green': choice(base_colors),
-            'white': (255, 255, 255),
-            'black': (0, 0, 0),
-            'red': (255, 0, 0),
-            'orange': choice(base_colors),
-            'light_red': choice(base_colors),
-            'darker_red': choice(base_colors),
-            'violet': choice(base_colors),
-            'yellow': choice(base_colors),
-            'blue': choice(base_colors),
-            'green': choice(base_colors),
-            'light_cyan': choice(base_colors),
-            'light_pink': choice(base_colors),
-            'light_yellow': choice(base_colors),
-            'light_violet': choice(base_colors),
-            'sky': choice(base_colors),
-            'darker_orange': choice(base_colors),
-                }
 
-    """
     colors = {
             'darkness': (0, 0, 10),
             'dark_red': (191, 0, 0),
@@ -125,7 +96,6 @@ def get_constants():
             'sky': (0, 191, 255),
             'darker_orange': (127, 63, 0),
             }
-    """
 
     constants = {
             'window_title': window_title,
@@ -147,6 +117,7 @@ def get_constants():
             'fov_radius': fov_radius,
             'max_monsters_per_room': max_monsters_per_room,
             'max_items_per_room': max_items_per_room,
+            'base_colors': base_colors,
             'colors': colors,
             }
 
@@ -180,6 +151,60 @@ def get_game_variables(constants):
             fighter=fighter_component, caster=caster_component, inventory=inventory_component, level=level_component,
             equipment=equipment_component)
     entities = [player]
+
+    base_colors = constants['base_colors']
+
+    colors = {
+            'darkness': (0, 0, 10),
+            'dark_red': base_colors.pop(randint(0, len(base_colors) - 1)),
+            'dark_wall': (0,0,60),
+            'dark_ground': base_colors.pop(randint(0, len(base_colors) - 1)),
+            'light_wall': base_colors.pop(randint(0, len(base_colors) - 1)),
+            'light_ground': base_colors.pop(randint(0, len(base_colors) - 1)),
+            'desaturated_green': base_colors.pop(randint(0, len(base_colors) - 1)),
+            'darker_green': base_colors.pop(randint(0, len(base_colors) - 1)),
+            'white': (255, 255, 255),
+            'black': (0, 0, 0),
+            'red': (255, 0, 0),
+            'orange': base_colors.pop(randint(0, len(base_colors) - 1)),
+            'light_red': base_colors.pop(randint(0, len(base_colors) - 1)),
+            'darker_red': base_colors.pop(randint(0, len(base_colors) - 1)),
+            'violet': base_colors.pop(randint(0, len(base_colors) - 1)),
+            'yellow': base_colors.pop(randint(0, len(base_colors) - 1)),
+            'blue': base_colors.pop(randint(0, len(base_colors) - 1)),
+            'green': base_colors.pop(randint(0, len(base_colors) - 1)),
+            'light_cyan': base_colors.pop(randint(0, len(base_colors) - 1)),
+            'light_pink': base_colors.pop(randint(0, len(base_colors) - 1)),
+            'light_yellow': base_colors.pop(randint(0, len(base_colors) - 1)),
+            'light_violet': base_colors.pop(randint(0, len(base_colors) - 1)),
+            'sky': base_colors.pop(randint(0, len(base_colors) - 1)),
+            'darker_orange': base_colors.pop(randint(0, len(base_colors) - 1)),
+                }
+    constants['colors'] = colors
+
+    base_colors = [
+            (191, 0, 0),
+            (30,30,100),
+            (130, 110, 50),
+            (200, 180, 50),
+            (63, 127, 63),
+            (0, 127, 0),
+            (255, 127, 0),
+            (255, 114, 114),
+            (127, 0, 0),
+            (127, 0, 255),
+            (255, 255, 0),
+            (0, 0, 255),
+            (0, 255, 0),
+            (144, 255, 255),
+            (255, 144, 184),
+            (255, 255, 114),
+            (184, 114, 255),
+            (0, 191, 255),
+            (127, 63, 0)
+            ]
+
+    constants['base_colors'] = base_colors
 
     equippable_component = Equippable(EquipmentSlots.MAIN_HAND, power_bonus=1)
     dagger = Entity(0, 0, '-', constants['colors'].get('sky'), 'Dagger', equippable=equippable_component)

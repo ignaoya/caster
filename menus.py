@@ -53,11 +53,11 @@ def main_menu(con, root_console, background_image, screen_width, screen_height, 
 
     title = 'CASTER'
     center = (screen_width - len(title)) // 2
-    root_console.draw_str(center, screen_height // 2 - 4, title, bg=None, fg=colors.get('light_yellow'))
+    root_console.draw_str(center, screen_height // 2 - 4, title, bg=None, fg=(255,255,114))
 
     title = 'By Ignacio Oyarzabal'
     center = (screen_width - len(title)) // 2
-    root_console.draw_str(center, screen_height - 2, title, bg=None, fg=colors.get('light_yellow'))
+    root_console.draw_str(center, screen_height - 2, title, bg=None, fg=(255,255,114))
 
     menu(con, root_console, '', ['New Game', 'Continue', 'Quit'], 24, screen_width, screen_height)
 

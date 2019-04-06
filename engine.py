@@ -74,7 +74,8 @@ def main():
                 show_main_menu = False
             elif load_saved_game:
                 try:
-                    player, entities, game_map, message_log, game_state, lexicon = load_game()
+                    player, entities, game_map, message_log, game_state, lexicon, colors = load_game()
+                    constants['colors'] = colors
                     show_main_menu = False
                 except FileNotFoundError:
                     show_load_error_message = True
@@ -298,7 +299,7 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
             elif game_state == GameStates.TARGETING:
                 player_turn_results.append({'targeting_cancelled': True})
             else:
-                save_game(player, entities, game_map, message_log, game_state, lexicon)
+                save_game(player, entities, game_map, message_log, game_state, lexicon, constants['colors'])
                 return True
 
         if fullscreen:
