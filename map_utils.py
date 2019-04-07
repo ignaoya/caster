@@ -11,7 +11,7 @@ from components.fountain import Fountain
 from components.equipment import EquipmentSlots
 from components.equippable import Equippable
 from entity import Entity
-from item_functions import heal, read, cast_invisibility, cast_lightning, cast_fireball, cast_confuse
+from item_functions import heal, read, restore
 from random_utils import from_dungeon_level, random_choice_from_dict
 from game_messages import Message
 
@@ -67,7 +67,10 @@ def place_entities(room, entities, dungeon_level, colors, lexicon):
             'troll': from_dungeon_level([[15,3], [30, 5], [60, 7]], dungeon_level),
             }
     item_chances = {
-            'healing_potion': 35, 
+            'small_healing_potion': 35, 
+            'small_mana_potion': 10,
+            'healing_potion': from_dungeon_level([[5,2], [10,4], [20, 6]], dungeon_level),
+            'mana_potion': from_dungeon_level([[5,3], [10, 4], [20,6]], dungeon_level),
             'sword': from_dungeon_level([[5,4]], dungeon_level),
             'shield': from_dungeon_level([[15, 8]], dungeon_level),
             'fire_scroll': from_dungeon_level([[35, 3]], dungeon_level),
@@ -107,9 +110,21 @@ def place_entities(room, entities, dungeon_level, colors, lexicon):
         if not any([entity for entity in entities if entity.x == x and entity.y == y]):
             item_choice = random_choice_from_dict(item_chances)
 
+            if item_choice == 'small_healing_potion':
+                item_component = Item(use_function=heal, amount=25)
+                item = Entity(x, y, '!', colors.get('red'), 'Small Healing Potion', render_order=RenderOrder.ITEM,
+                              item=item_component)
+            elif item_choice == 'small_mana_potion':
+                item_component = Item(use_function=restore, amount=5)
+                item = Entity(x, y, '!', colors.get('blue'), 'Small Mana Potion', render_order=RenderOrder.ITEM,
+                              item=item_component)
             if item_choice == 'healing_potion':
-                item_component = Item(use_function=heal, amount=40)
-                item = Entity(x, y, '!', colors.get('violet'), 'Healing Potion', render_order=RenderOrder.ITEM,
+                item_component = Item(use_function=heal, amount=50)
+                item = Entity(x, y, '!', colors.get('red'), 'Healing Potion', render_order=RenderOrder.ITEM,
+                              item=item_component)
+            elif item_choice == 'mana_potion':
+                item_component = Item(use_function=restore, amount=10)
+                item = Entity(x, y, '!', colors.get('blue'), 'Mana Potion', render_order=RenderOrder.ITEM,
                               item=item_component)
             elif item_choice == 'sword':
                 equippable_component = Equippable(EquipmentSlots.MAIN_HAND, power_bonus=3)

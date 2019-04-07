@@ -1,16 +1,34 @@
-from magic.spell_functions import cast_fireball, cast_lightning
+from magic.spell_functions import cast_fireball, cast_lightning, cast_invisibility
 from game_messages import Message
 
 class Caster:
     def __init__(self, mana, focus, regeneration=1):
         self.mana = mana
-        self.max_mana = mana
+        self.base_max_mana = mana
         self.focus = focus
-        self.max_focus = focus
+        self.base_max_focus = focus
         self.regeneration = regeneration
 
 
-    def regenerate(self, amount):
+    @property
+    def max_mana(self):
+        if self.owner and self.owner.equipment:
+            bonus = self.owner.equipment.max_mana_bonus
+        else:
+            bonus = 0
+
+        return self.base_max_mana + bonus
+
+    @property
+    def max_focus(self):
+        if self.owner and self.owner.equipment:
+            bonus = self.owner.equipment.max_focus_bonus
+        else:
+            bonus = 0
+
+        return self.base_max_focus + bonus
+
+    def restore(self, amount):
         self.mana += amount
         if self.mana > self.max_mana:
             self.mana = self.max_mana

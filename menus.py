@@ -98,8 +98,14 @@ def character_screen(root_console, player, character_screen_width, character_scr
     window.draw_str(31, 3, 'Level: {0}'.format(player.level.caster_level))
     window.draw_str(31, 4, 'Experience: {0}'.format(player.level.caster_xp))
     window.draw_str(31, 5, 'Experience to Level Up: {0}'.format(player.level.experience_to_next_caster_level))
-    window.draw_str(31, 7, 'Maximum MP: {0}'.format(player.caster.max_mana))
-    window.draw_str(31, 8, 'Focus: {0}'.format(player.caster.max_focus))
+    if player.caster.max_mana != player.caster.base_max_mana:
+        window.draw_str(31, 7, 'Maximum MP: {0}(+{1})'.format(player.caster.base_max_mana, player.equipment.max_mana_bonus))
+    else:
+        window.draw_str(31, 7, 'Maximum MP: {0}'.format(player.caster.max_mana))
+    if player.caster.max_focus != player.caster.base_max_focus:
+        windos.draw_str(31, 8, 'Focus: {0}(+{1})'.format(player.caster.base_max_focus, player.equipment.max_focus_bonus))
+    else:
+        window.draw_str(31, 8, 'Focus: {0}'.format(player.caster.max_focus))
 
     x = screen_width // 2 - character_screen_width // 2
     y = screen_height // 2 - character_screen_height // 2

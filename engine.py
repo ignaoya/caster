@@ -17,7 +17,6 @@ from render_functions import render_all, clear_all
 # Imports for testing items
 
 from components.item import Item
-from item_functions import cast_confuse, cast_invisibility
 
 # Imports for testing items
 
@@ -270,10 +269,10 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
             elif level_up == 'def':
                 player.fighter.base_defense += 1
             elif level_up == 'mp':
-                player.caster.max_mana += 2
+                player.caster.base_max_mana += 2
                 player.caster.mana += 2
             elif level_up == 'fcs':
-                player.caster.max_focus += 1
+                player.caster.base_max_focus += 1
                 player.caster.focus += 1
 
             game_state = previous_game_state

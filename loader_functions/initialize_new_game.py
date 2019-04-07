@@ -103,7 +103,6 @@ def get_game_variables(constants):
     # Imports for testing items
 
     from components.item import Item
-    from item_functions import cast_confuse, cast_invisibility
 
     # Imports for testing items
 
