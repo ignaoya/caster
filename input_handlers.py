@@ -56,7 +56,10 @@ def handle_player_turn_keys(user_input):
         return {'drop_inventory': True}
 
     elif key_char == '.' and user_input.shift:
-        return {'take_stairs': True}
+        return {'take_down_stairs': True}
+
+    elif key_char == ',' and user_input.shift:
+        return {'take_up_stairs': True}
 
     elif key_char == 'c':
         return {'show_character_screen': True}

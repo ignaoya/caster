@@ -145,7 +145,8 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
         show_inventory = action.get('show_inventory')
         drop_inventory = action.get('drop_inventory')
         inventory_index = action.get('inventory_index')
-        take_stairs = action.get('take_stairs')
+        take_down_stairs = action.get('take_down_stairs')
+        take_up_stairs = action.get('take_up_stairs')
         level_up = action.get('level_up')
         show_character_screen = action.get('show_character_screen')
         look_around = action.get('look_around')
@@ -249,14 +250,33 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
             else:
                 verse += letter
 
-        if take_stairs and game_state == GameStates.PLAYERS_TURN:
+        if take_down_stairs and game_state == GameStates.PLAYERS_TURN:
             for entity in entities:
                 if entity.stairs and entity.x == player.x and entity.y == player.y:
-                    game_map, entities = next_floor(player, message_log, entity.stairs.floor, constants, lexicon)
-                    fov_recompute = True
-                    con.clear()
+                    if entity.stairs.direction == 'down':
+                        game_map, entities = next_floor(player, message_log, entity.stairs.floor, constants, lexicon, 'down')
+                        fov_recompute = True
+                        con.clear()
 
-                    break
+                        break
+                    else:
+                        message_log.add_message(Message('These are not down stairs', constants['colors'].get('yellow')))
+                        break
+            else:
+                message_log.add_message(Message('There are no stairs here.', constants['colors'].get('yellow')))
+
+        if take_up_stairs and game_state == GameStates.PLAYERS_TURN:
+            for entity in entities:
+                if entity.stairs and entity.x == player.x and entity.y == player.y:
+                    if entity.stairs.direction == 'up':
+                        game_map, entities = next_floor(player, message_log, entity.stairs.floor, constants, lexicon, 'up')
+                        fov_recompute = True
+                        con.clear()
+
+                        break
+                    else:
+                        message_log.add_message(Message('These are not up stairs', constants['colors'].get('yellow')))
+                        break
             else:
                 message_log.add_message(Message('There are no stairs here.', constants['colors'].get('yellow')))
 

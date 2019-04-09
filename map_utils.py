@@ -162,7 +162,7 @@ def place_entities(room, entities, dungeon_level, colors, lexicon):
             entities.append(item)
 
 def make_map(game_map, max_rooms, room_min_size, room_max_size, map_width, map_height, player,
-             entities, colors, lexicon):
+             entities, colors, lexicon, direction=None):
     rooms = []
     num_rooms = 0
 
@@ -223,10 +223,33 @@ def make_map(game_map, max_rooms, room_min_size, room_max_size, map_width, map_h
             rooms.append(new_room)
             num_rooms += 1
             
-    stairs_component = Stairs(game_map.dungeon_level + 1)
-    down_stairs = Entity(center_of_last_room_x, center_of_last_room_y, '>', (255,255,255), 'Stairs',
-                        render_order=RenderOrder.STAIRS, stairs=stairs_component)
-    entities.append(down_stairs)
+    if direction == 'down':
+        down_stairs_component = Stairs(game_map.dungeon_level + 1, 'down')
+        down_stairs = Entity(center_of_last_room_x, center_of_last_room_y, '>', (255,255,255), 'Down Stairs',
+                            render_order=RenderOrder.STAIRS, stairs=down_stairs_component)
+        entities.append(down_stairs)
+
+        up_stairs_component = Stairs(game_map.dungeon_level - 1, 'up')
+        up_stairs = Entity(player.x, player.y, '<', (255,255,255), 'Up Stairs',
+                           render_order=RenderOrder.STAIRS, stairs=up_stairs_component)
+        entities.append(up_stairs)
+
+    elif direction == 'up':
+        down_stairs_component = Stairs(game_map.dungeon_level + 1, 'down')
+        down_stairs = Entity(player.x, player.y, '>', (255,255,255), 'Down Stairs',
+                            render_order=RenderOrder.STAIRS, stairs=down_stairs_component)
+        entities.append(down_stairs)
+
+        up_stairs_component = Stairs(game_map.dungeon_level - 1, 'up')
+        up_stairs = Entity(center_of_last_room_x, center_of_last_room_y, '<', (255,255,255), 'Up Stairs',
+                           render_order=RenderOrder.STAIRS, stairs=up_stairs_component)
+        entities.append(up_stairs)
+
+    else:
+        down_stairs_component = Stairs(game_map.dungeon_level + 1, 'down')
+        down_stairs = Entity(center_of_last_room_x, center_of_last_room_y, '>', (255,255,255), 'Down Stairs',
+                            render_order=RenderOrder.STAIRS, stairs=down_stairs_component)
+        entities.append(down_stairs)
 
     # choose a random room from all rooms except the first and the last, to put a fountain of health
     fountain_location = rooms[randint(1, len(rooms) - 2)]
@@ -236,13 +259,13 @@ def make_map(game_map, max_rooms, room_min_size, room_max_size, map_width, map_h
             render_order=RenderOrder.ITEM, fountain=fountain_component)
     entities.append(fountain)
 
-def next_floor(player, message_log, dungeon_level, constants, lexicon):
+def next_floor(player, message_log, dungeon_level, constants, lexicon, direction):
     game_map = GameMap(constants['map_width'], constants['map_height'], dungeon_level)
     entities = [player]
 
     make_map(game_map, constants['max_rooms'], constants['room_min_size'],
              constants['room_max_size'], constants['map_width'], constants['map_height'], player,
-             entities, constants['colors'], lexicon)
+             entities, constants['colors'], lexicon, direction)
 
     player.fighter.heal(player.fighter.max_hp // 2)
 
