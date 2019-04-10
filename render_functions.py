@@ -53,20 +53,15 @@ def render_all(con, panel, entities, player, game_map, fov_recompute, root_conso
 
             elif game_map.explored[x][y]:
                 if wall:
-                    con.draw_char(x, y, None, fg=None, bg=colors.get('dark_wall'))
+                    con.draw_char(x, y, None, fg=None, bg=colors.get('black'))
                 else:
-                    con.draw_char(x, y, None, fg=None, bg=colors.get('dark_ground'))
+                    con.draw_char(x, y, None, fg=None, bg=colors.get('darkness'))
 
     entities_in_render_order = sorted(entities, key=lambda x: x.render_order.value)
     # Draw all entities in the list
     for entity in entities_in_render_order:
         draw_entity(con, entity, game_map)
 
-    """ Old, original HP bar
-    hp_bar_length = 10
-    hp_bar_str = '[' + ('#'*int(player.fighter.hp / player.fighter.max_hp * hp_bar_length)).ljust(hp_bar_length)+ ']'
-    con.draw_str(10, screen_height - 2, hp_bar_str)
-    """
     root_console.blit(con, 0, 0, screen_width, screen_height, 0, 0)
 
     panel.clear(fg=colors.get('white'), bg=colors.get('black'))

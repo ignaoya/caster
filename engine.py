@@ -260,7 +260,7 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
 
                         break
                     else:
-                        message_log.add_message(Message('These are not down stairs', constants['colors'].get('yellow')))
+                        message_log.add_message(Message('These are not down stairs.', constants['colors'].get('yellow')))
                         break
             else:
                 message_log.add_message(Message('There are no stairs here.', constants['colors'].get('yellow')))
@@ -275,7 +275,7 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
 
                         break
                     else:
-                        message_log.add_message(Message('These are not up stairs', constants['colors'].get('yellow')))
+                        message_log.add_message(Message('These are not up stairs.', constants['colors'].get('yellow')))
                         break
             else:
                 message_log.add_message(Message('There are no stairs here.', constants['colors'].get('yellow')))
@@ -372,7 +372,7 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
                 if dead_entity == player:
                     message, game_state = kill_player(dead_entity, constants['colors'])
                 else:
-                    message = kill_monster(dead_entity, constants['colors'])
+                    message = kill_monster(dead_entity, entities, constants['colors'])
 
                 message_log.add_message(message)
 
@@ -493,7 +493,7 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
                             if dead_entity == player:
                                 message, game_state =  kill_player(dead_entity, constants['colors'])
                             else:
-                                message = kill_monster(dead_entity, constants['colors'])
+                                message = kill_monster(dead_entity, entities, constants['colors'])
 
                             message_log.add_message(message)
 

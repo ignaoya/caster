@@ -10,7 +10,7 @@ def kill_player(player, colors):
     return Message('You died!', colors.get('red')), GameStates.PLAYER_DEAD
 
 
-def kill_monster(monster, colors):
+def kill_monster(monster, entities, colors):
     death_message = Message('{0} is dead!'.format(monster.name.capitalize()), colors.get('orange'))
 
     monster.char = '%'
@@ -20,5 +20,10 @@ def kill_monster(monster, colors):
     monster.ai = None
     monster.name = 'remains of ' + monster.name
     monster.render_order = RenderOrder.CORPSE
+
+    if monster.inventory:
+        for i in monster.inventory.items:
+            entities.append(i)
+            monster.inventory.drop_item(i, colors)
 
     return death_message
