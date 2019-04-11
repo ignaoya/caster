@@ -85,6 +85,20 @@ def place_entities(room, entities, dungeon_level, colors, lexicon):
             'geography_scroll': from_dungeon_level([[35, 4]], dungeon_level),
             'invisibility_scroll': from_dungeon_level([[35, 2]], dungeon_level),
             }
+    items = {
+            'small_healing_potion': {'name': 'Small Healing Potion', 'item_type': 'potion', 'use_function': heal,
+                                     'amount': 25, 'char': '!', 'color': 'red'},
+            'small_mana_potion': {'name': 'Small Mana Potion', 'item_type': 'potion', 'use_function': restore,
+                                  'amount': 5, 'char': '!', 'color': 'blue'},
+            'healing_potion': {'name': 'Healing Potion', 'item_type': 'potion', 'use_function': heal,
+                               'amount': 50, 'char': '!', 'color': 'red'},
+            'mana_potion': {'name': 'Mana Potion', 'item_type': 'potion', 'use_function': restore,
+                                  'amount': 10, 'char': '!', 'color': 'blue'},
+            'sword': {'name': 'Sword', 'item_type': 'equipment', 'char': '/', 'color': 'sky', 'bonuses':
+                {'power': 3}, 'slot': EquipmentSlots.MAIN_HAND},
+            'shield': {'name': 'Shield', 'item_type': 'equipment', 'char': ']', 'color': 'darker_orange',
+                       'bonuses': {'defense': 1}, 'slot': EquipmentSlots.OFF_HAND},
+            }
 
     for i in range(number_of_monsters):
         # Choose a random location in the room
@@ -105,28 +119,10 @@ def place_entities(room, entities, dungeon_level, colors, lexicon):
         if not any([entity for entity in entities if entity.x == x and entity.y == y]):
             item_choice = random_choice_from_dict(item_chances)
 
-            if item_choice == 'small_healing_potion':
-                item_component = Item(use_function=heal, amount=25)
-                item = Entity(x, y, '!', colors.get('red'), 'Small Healing Potion', render_order=RenderOrder.ITEM,
-                              item=item_component)
-            elif item_choice == 'small_mana_potion':
-                item_component = Item(use_function=restore, amount=5)
-                item = Entity(x, y, '!', colors.get('blue'), 'Small Mana Potion', render_order=RenderOrder.ITEM,
-                              item=item_component)
-            if item_choice == 'healing_potion':
-                item_component = Item(use_function=heal, amount=50)
-                item = Entity(x, y, '!', colors.get('red'), 'Healing Potion', render_order=RenderOrder.ITEM,
-                              item=item_component)
-            elif item_choice == 'mana_potion':
-                item_component = Item(use_function=restore, amount=10)
-                item = Entity(x, y, '!', colors.get('blue'), 'Mana Potion', render_order=RenderOrder.ITEM,
-                              item=item_component)
-            elif item_choice == 'sword':
-                equippable_component = Equippable(EquipmentSlots.MAIN_HAND, power_bonus=3)
-                item = Entity(x, y, '/', colors.get('sky'), 'Sword', equippable=equippable_component)
-            elif item_choice == 'shield':
-                equippable_component = Equippable(EquipmentSlots.OFF_HAND, defense_bonus=1)
-                item = Entity(x, y, '[', colors.get('darker_orange'), 'Shield', equippable=equippable_component)
+            if item_choice in items:
+                n = item_choice
+                item = create_item(items[n]['name'], items[n]['item_type'], colors, items[n]['color'], items[n]['char'],
+                                   x, y, items[n])
             elif item_choice == 'fire_scroll':
                 word = [i for i in lexicon.keys() if lexicon[i] in ['fireball', 'burn']]
                 item_component = Item(use_function=read, lexicon=lexicon, word=word)
@@ -287,3 +283,25 @@ def create_monster(name, hp, defense, power, xp, item_probability, item_level, c
                          render_order=RenderOrder.ACTOR, fighter=fighter_component, ai=ai_component)
     
     return monster
+
+def create_item(name, item_type, colors, color, char, x, y, kwargs):
+    if item_type == 'potion':
+        use_function = kwargs.get('use_function')
+        amount = kwargs.get('amount')
+        item_component = Item(use_function=use_function, amount=amount)
+        item = Entity(x, y, char, colors.get(color), name, render_order=RenderOrder.ITEM,
+                      item=item_component)
+
+    elif item_type == 'equipment':
+        slot = kwargs.get('slot')
+        bonuses = kwargs.get('bonuses')
+        power_bonus = bonuses.get('power', 0)
+        defense_bonus = bonuses.get('defense', 0)
+        max_hp_bonus = bonuses.get('hp', 0)
+        max_mana_bonus = bonuses.get('mana', 0)
+        max_focus_bonus = bonuses.get('focus', 0)
+        equippable_component = Equippable(slot, power_bonus=power_bonus, defense_bonus=defense_bonus, max_hp_bonus=max_hp_bonus,
+                                          max_mana_bonus=max_mana_bonus, max_focus_bonus=max_focus_bonus)
+        item = Entity(x, y, char, colors.get(color), name, equippable=equippable_component)
+
+    return item
