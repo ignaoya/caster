@@ -67,6 +67,11 @@ def place_entities(room, entities, dungeon_level, colors, lexicon):
             'orc': 80, 
             'troll': from_dungeon_level([[15,3], [30, 5], [60, 7]], dungeon_level),
             }
+    monsters = {'orc': {'name': 'Orc', 'hp': 20, 'defense': 0, 'power': 4, 'xp': 35, 'item_probability': 5,
+                        'item_level': 1, 'color': 'desaturated_green', 'char': 'o'},
+                'troll': {'name': 'Troll', 'hp': 30, 'defense': 2, 'power': 8, 'xp': 100, 'item_probability': 2,
+                        'item_level': 2, 'color': 'desaturated_green', 'char': 'T'},
+                        }
     item_chances = {
             'small_healing_potion': 35, 
             'small_mana_potion': 10,
@@ -87,41 +92,10 @@ def place_entities(room, entities, dungeon_level, colors, lexicon):
         y = randint(room.y1 + 1, room.y2 - 1)
 
         if not any([entity for entity in entities if entity.x == x and entity.y == y]):
-            monster_choice = random_choice_from_dict(monster_chances)
-
-            if monster_choice == 'orc':
-                fighter_component = Fighter(hp=20, defense=0, power=4, xp=35)
-                ai_component = BasicMonster()
-                if randint(1, 2) == 2:
-                    inventory_component = Inventory(1)
-                    equipment_component = Equipment()
-                    loot_component = Item(use_function=heal, amount=25)
-                    loot = Entity(0,0, '!', colors.get('red'), 'Small Healing Potion', render_order=RenderOrder.ITEM,
-                                  item=loot_component)
-                    inventory_component.add_item(loot, colors)
-                    monster = Entity(x, y, 'o', colors.get('desaturated_green'), 'Orc', blocks=True,
-                                     render_order=RenderOrder.ACTOR, fighter=fighter_component, inventory=inventory_component,
-                                     equipment=equipment_component, ai=ai_component)
-                else:
-                    monster = Entity(x, y, 'o', colors.get('desaturated_green'), 'Orc', blocks=True,
-                                     render_order=RenderOrder.ACTOR, fighter=fighter_component, ai=ai_component)
-            else:
-                fighter_component = Fighter(hp=30, defense=2, power=8, xp=100)
-                ai_component = BasicMonster()
-                if randint(1, 2) == 2:
-                    inventory_component = Inventory(1)
-                    equipment_component = Equipment()
-                    loot_component = Item(use_function=heal, amount=25)
-                    loot = Entity(0,0, '!', colors.get('red'), 'Small Healing Potion', render_order=RenderOrder.ITEM,
-                                  item=loot_component)
-                    inventory_component.add_item(loot, colors)
-                    monster = Entity(x, y, 'T', colors.get('darker_green'), 'Troll', blocks=True,
-                                     render_order=RenderOrder.ACTOR, fighter=fighter_component, inventory=inventory_component, 
-                                     equipment=equipment_component, ai=ai_component)
-                else:
-                    monster = Entity(x, y, 'T', colors.get('darker_green'), 'Troll', blocks=True,
-                                     render_order=RenderOrder.ACTOR, fighter=fighter_component, ai=ai_component)
-
+            n = random_choice_from_dict(monster_chances)
+            monster = create_monster(monsters[n]['name'], monsters[n]['hp'], monsters[n]['defense'], 
+                    monsters[n]['power'], monsters[n]['xp'], monsters[n]['item_probability'], monsters[n]['item_level'],
+                    colors, monsters[n]['color'], monsters[n]['char'], x, y)
             entities.append(monster)
 
     for i in range(number_of_items):
@@ -294,3 +268,22 @@ def next_floor(player, message_log, dungeon_level, constants, lexicon, direction
                                     constants['colors'].get('light_violet')))
 
     return game_map, entities
+
+def create_monster(name, hp, defense, power, xp, item_probability, item_level, colors, color, char, x, y):
+    fighter_component = Fighter(hp=hp, defense=defense, power=power, xp=xp)
+    ai_component = BasicMonster()
+    if randint(1, item_probability) == item_probability:
+        inventory_component = Inventory(1)
+        equipment_component = Equipment()
+        loot_component = Item(use_function=heal, amount=25)
+        loot = Entity(0,0, '!', colors.get('red'), 'Small Healing Potion', render_order=RenderOrder.ITEM,
+                      item=loot_component)
+        inventory_component.add_item(loot, colors)
+        monster = Entity(x, y, char, colors.get(color), name, blocks=True,
+                         render_order=RenderOrder.ACTOR, fighter=fighter_component, inventory=inventory_component,
+                         equipment=equipment_component, ai=ai_component)
+    else:
+        monster = Entity(x, y, char, colors.get(color), name, blocks=True,
+                         render_order=RenderOrder.ACTOR, fighter=fighter_component, ai=ai_component)
+    
+    return monster
