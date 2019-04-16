@@ -132,12 +132,9 @@ def place_entities(room, entities, dungeon_level, colors, lexicon):
         y = randint(room.y1 + 1, room.y2 -1)
 
         if not any([entity for entity in entities if entity.x == x and entity.y == y]):
-            item_choice = random_choice_from_dict(item_chances)
-
-            if item_choice in items:
-                n = item_choice
-                item = create_item(items[n]['name'], items[n]['item_type'], colors, items[n]['color'], items[n]['char'],
-                                   x, y, items[n])
+            n = random_choice_from_dict(item_chances)
+            item = create_item(items[n]['name'], items[n]['item_type'], colors, items[n]['color'], items[n]['char'],
+                               x, y, items[n])
 
             entities.append(item)
 
