@@ -1,6 +1,9 @@
 from game_messages import Message
 from render_functions import RenderOrder
 from game_states import GameStates
+from components.fighter import Fighter
+from components.ai import ConfusedMonster, BasicMonster
+from map_utils import monsters
 
 
 def kill_player(player, colors):
@@ -27,3 +30,23 @@ def kill_monster(monster, entities, colors):
             monster.inventory.drop_item(i, colors)
 
     return death_message
+
+def raise_monster_skeleton(monster, entities, colors):
+    origin = monster.name.split()[2].lower()
+    monster.char = 's'
+    monster.color = colors.get('white')
+    monster.blocks = True
+    fighter_component = Fighter(hp=monsters[origin]['hp'], defense=monsters[origin]['defense'], power=monsters[origin]['power'])
+    fighter_component.owner = monster
+    basic_ai = BasicMonster()
+    basic_ai.owner = monster
+    ai_component = ConfusedMonster(basic_ai, 10)
+    ai_component.owner = monster
+    monster.fighter = fighter_component
+    monster.ai = ai_component
+    monster.name = ' '.join([origin, 'skeleton'])
+    monster.render_order = RenderOrder.ACTOR
+
+    message = {'message': Message('The {0} rises from the dead.'.format(monster.name), colors.get('red'))}
+
+    return message

@@ -1,6 +1,6 @@
 from random import choice, randint
 
-word_list = ['fireball', 'lightning', 'invisibility', 'burn', 'north', 'south', 'east', 'west', '1', '2', '3', '4', '5']
+word_list = ['fireball', 'lightning', 'invisibility', 'burn', 'skeleton', 'north', 'south', 'east', 'west', '1', '2', '3', '4', '5']
 
 def get_lexicon(word_list=word_list):
     vocals = 'aeiou'

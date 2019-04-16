@@ -100,26 +100,11 @@ def get_constants():
 
 def get_game_variables(constants):
 
-    # Imports for testing items
-
-    from components.item import Item
-
-    # Imports for testing items
-
     fighter_component = Fighter(hp=100, defense=1, power=3)
     inventory_component = Inventory(26)
     level_component = Level()
     equipment_component = Equipment()
     caster_component = Caster(mana=5, focus=2)
-    #Testing section for new spells or items
-    """
-    for i in range(10):
-        item_component = Item(use_function=cast_invisibility, turns=10)
-        item = Entity(0, 0, '#', (255,255,255), 'Invisibility Scroll', render_order=RenderOrder.ITEM,
-                item=item_component)
-        inventory_component.add_item(item, constants['colors'])
-    """
-    #End of testing section
 
     player = Entity(0,0, '@', (255,255,255), 'Player', blocks=True, render_order=RenderOrder.ACTOR,
             fighter=fighter_component, caster=caster_component, inventory=inventory_component, level=level_component,

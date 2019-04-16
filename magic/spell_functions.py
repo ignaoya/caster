@@ -1,4 +1,5 @@
 from game_messages import Message
+from death_functions import raise_monster_skeleton
 from components.ai import ConfusedMonster
 
 
@@ -119,5 +120,35 @@ def cast_invisibility(*args, **kwargs):
         entity.fighter.make_invisible()
         results.append({'consumed': True, 'invisible': True, 'invisible_turns': turns, 'message': Message(
                                             'You feel invisible!', colors.get('green'))})
+
+    return results
+
+def cast_raise_skeleton(*args, **kwargs):
+    caster = args[0]
+    colors = args[1]
+    entities = kwargs.get('entities')
+    game_map = kwargs.get('game_map')
+    maximum_range = kwargs.get('maximum_range')
+
+    results = []
+
+    target = None
+    closest_distance = maximum_range + 1
+
+    for entity in entities:
+        if entity.name.split()[0] == "remains" and game_map.fov[entity.x, entity.y]:
+            distance = caster.distance_to(entity)
+
+            if distance < closest_distance:
+                target = entity
+                closest_distance = distance
+
+    if target:
+        results.append({'target': target, 'message': Message(
+            "You make a pact with death. I hope you know what you're doing.", colors.get('green'))})
+        results.append(raise_monster_skeleton(target, entities, colors))
+    else:
+        results.append({'target': None, 'message': Message(
+            'No corpse is close enough to raise.', colors.get('red'))})
 
     return results

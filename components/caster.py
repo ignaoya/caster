@@ -1,4 +1,4 @@
-from magic.spell_functions import cast_fireball, cast_lightning, cast_invisibility
+from magic.spell_functions import cast_fireball, cast_lightning, cast_invisibility, cast_raise_skeleton
 from game_messages import Message
 
 class Caster:
@@ -122,6 +122,11 @@ class Caster:
                     results.extend(cast_invisibility(entity, colors, turns=turns))
                     if any(result.get('invisible') for result in results):
                         results.append({'magic_xp': 25})
+            elif verse[0] == 'skeleton':
+                caster = self.owner
+                max_range = 5
+                results.append({'spell_cast': True})
+                results.extend(cast_raise_skeleton(caster, colors, entities=entities, game_map=game_map, maximum_range=max_range))
             else:
                 results.append({'spell_failed': True, 'message': Message('You fail to invoke the proper words. Nothing happens.',
                                                                     colors.get('yellow'))})

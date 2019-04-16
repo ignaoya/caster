@@ -16,6 +16,13 @@ from item_functions import heal, read, restore
 from random_utils import from_dungeon_level, random_choice_from_dict
 from game_messages import Message
 
+
+monsters = {'orc': {'name': 'Orc', 'hp': 20, 'defense': 0, 'power': 4, 'xp': 35, 'item_probability': 5,
+                    'item_level': 1, 'color': 'desaturated_green', 'char': 'o'},
+            'troll': {'name': 'Troll', 'hp': 30, 'defense': 2, 'power': 8, 'xp': 100, 'item_probability': 2,
+                    'item_level': 2, 'color': 'desaturated_green', 'char': 'T'},
+                    }
+
 class GameMap(Map):
     def __init__(self, width, height, dungeon_level=1):
         super().__init__(width, height)
@@ -67,11 +74,7 @@ def place_entities(room, entities, dungeon_level, colors, lexicon):
             'orc': 80, 
             'troll': from_dungeon_level([[15,3], [30, 5], [60, 7]], dungeon_level),
             }
-    monsters = {'orc': {'name': 'Orc', 'hp': 20, 'defense': 0, 'power': 4, 'xp': 35, 'item_probability': 5,
-                        'item_level': 1, 'color': 'desaturated_green', 'char': 'o'},
-                'troll': {'name': 'Troll', 'hp': 30, 'defense': 2, 'power': 8, 'xp': 100, 'item_probability': 2,
-                        'item_level': 2, 'color': 'desaturated_green', 'char': 'T'},
-                        }
+
     item_chances = {
             'small_healing_potion': 35, 
             'small_mana_potion': 10,
@@ -85,6 +88,7 @@ def place_entities(room, entities, dungeon_level, colors, lexicon):
             'geography_scroll': from_dungeon_level([[35, 4]], dungeon_level),
             'invisibility_scroll': from_dungeon_level([[35, 2]], dungeon_level),
             }
+
     items = {
             'small_healing_potion': {'name': 'Small Healing Potion', 'item_type': 'potion', 'use_function': heal,
                                      'amount': 25, 'char': '!', 'color': 'red'},

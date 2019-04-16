@@ -104,6 +104,8 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
 
     verse = ''
 
+    print(lexicon)
+
     while not tdl.event.is_window_closed():
         if fov_recompute:
             game_map.compute_fov(player.x, player.y, fov=constants['fov_algorithm'], radius=constants['fov_radius'],
