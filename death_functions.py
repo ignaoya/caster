@@ -2,7 +2,7 @@ from game_messages import Message
 from render_functions import RenderOrder
 from game_states import GameStates
 from components.fighter import Fighter
-from components.ai import ConfusedMonster, BasicMonster
+from components.ai import AlliedMonster, ConfusedMonster, BasicMonster
 from map_utils import monsters
 
 
@@ -38,9 +38,9 @@ def raise_monster_skeleton(monster, entities, colors):
     monster.blocks = True
     fighter_component = Fighter(hp=monsters[origin]['hp'], defense=monsters[origin]['defense'], power=monsters[origin]['power'])
     fighter_component.owner = monster
-    basic_ai = BasicMonster()
-    basic_ai.owner = monster
-    ai_component = ConfusedMonster(basic_ai, 10)
+    #basic_ai = BasicMonster()
+    #basic_ai.owner = monster
+    ai_component = AlliedMonster()
     ai_component.owner = monster
     monster.fighter = fighter_component
     monster.ai = ai_component

@@ -7,6 +7,7 @@ class BasicMonster:
     def __init__(self):
         self.last_target_x = None
         self.last_target_y = None
+        self.ally = False
     def take_turn(self, target, game_map, entities):
         results = []
         monster = self.owner
@@ -20,7 +21,7 @@ class BasicMonster:
                 attack_results = monster.fighter.attack(target)
                 results.extend(attack_results)
         elif self.last_target_x and self.last_target_y:
-            monster.move_towards(target.x, target.y, game_map, entities)
+            monster.move_towards(self.last_target_x, self.last_target_y, game_map, entities)
             
         return results
 
@@ -28,6 +29,7 @@ class ConfusedMonster:
     def __init__(self, previous_ai, number_of_turns=10):
         self.previous_ai = previous_ai
         self.number_of_turns = number_of_turns
+        self.ally = False
 
     def take_turn(self, target, game_map, entities):
         results = []
@@ -53,4 +55,38 @@ class ConfusedMonster:
             self.owner.ai = self.previous_ai
             results.append({'message': Message('The {0} is no longer confused!'.format(self.owner.name))})
 
+        return results
+
+class AlliedMonster:
+
+    def __init__(self):
+        self.last_player_x = None
+        self.last_player_y = None
+        self.ally = True
+        self.target = None
+
+    def take_turn(self, player, game_map, entities):
+        results = []
+        monster = self.owner
+        enemies = [entity for entity in entities if (game_map.fov[entity.x, entity.y] and entity.ai and not entity.ai.ally)]
+        if self.target and (self.target.name.split()[0] == 'remains' or not game_map.fov[self.target.x, self.target.y]):
+            self.target = None
+
+        if len(enemies) > 0:
+            if self.target is None:
+                self.target = choice(enemies)
+            if monster.distance_to(self.target) >= 2:
+                monster.move_towards(self.target.x, self.target.y, game_map, entities)
+            elif self.target.fighter.hp > 0:
+                attack_results = monster.fighter.attack(self.target)
+                results.extend(attack_results)
+        else:
+            if game_map.fov[monster.x, monster.y] and player.fighter.visible:
+                self.last_player_x = player.x
+                self.last_player_y = player.y
+                if monster.distance_to(player) >= 2:
+                    monster.move_towards(player.x, player.y, game_map, entities)
+            elif self.last_player_x and self.last_player_y:
+                monster.move_towards(self.last_player_x, self.last_player_y, game_map, entities)
+            
         return results

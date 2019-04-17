@@ -20,7 +20,7 @@ def get_word(meaning, vocals, consonants, digits, p_vocal, lexicon):
     elif meaning in digits:
         length = randint(1, 3)
     else:
-        length = randint(2, 10)
+        length = randint(2, 7)
 
     word = ''
 
