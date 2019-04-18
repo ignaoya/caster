@@ -127,6 +127,10 @@ class Caster:
                 max_range = 5
                 results.append({'spell_cast': True})
                 results.extend(cast_raise_skeleton(caster, colors, entities=entities, game_map=game_map, maximum_range=max_range))
+                for i in results:
+                    if i.get('target'):
+                        results.append({'magic_xp': 25})
+                        break
             else:
                 results.append({'spell_failed': True, 'message': Message('You fail to invoke the proper words. Nothing happens.',
                                                                     colors.get('yellow'))})

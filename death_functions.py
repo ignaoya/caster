@@ -36,7 +36,7 @@ def raise_monster_skeleton(monster, entities, colors):
     monster.char = 's'
     monster.color = colors.get('white')
     monster.blocks = True
-    fighter_component = Fighter(hp=monsters[origin]['hp'], defense=monsters[origin]['defense'], power=monsters[origin]['power'])
+    fighter_component = Fighter(hp=monsters[origin]['hp']//2, defense=0, power=monsters[origin]['power']//2)
     fighter_component.owner = monster
     #basic_ai = BasicMonster()
     #basic_ai.owner = monster
