@@ -104,7 +104,8 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
 
     verse = ''
 
-    print(lexicon)
+    #uncomment the next line to facilitate manual testing of new spells
+    #print(lexicon)
 
     while not tdl.event.is_window_closed():
         if fov_recompute:

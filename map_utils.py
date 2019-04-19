@@ -87,6 +87,7 @@ def place_entities(room, entities, dungeon_level, colors, lexicon):
             'numbers_scroll': from_dungeon_level([[35, 2]], dungeon_level),
             'geography_scroll': from_dungeon_level([[35, 4]], dungeon_level),
             'invisibility_scroll': from_dungeon_level([[35, 2]], dungeon_level),
+            'skeleton_scroll': from_dungeon_level([[20, 1]], dungeon_level),
             }
 
     items = {
@@ -108,7 +109,7 @@ def place_entities(room, entities, dungeon_level, colors, lexicon):
             'lightning_scroll': {'name': 'Scroll of Lightning', 'item_type': 'scroll', 'color':'sky', 'char': '#',
                             'words': [i for i in lexicon.keys() if lexicon[i] in ['lightning']],
                              'lexicon': lexicon},
-            'numbers_scroll': {'name': 'Scroll of Counting', 'item_type': 'scroll', 'color':'black', 'char': '#',
+            'numbers_scroll': {'name': 'Scroll of Counting', 'item_type': 'scroll', 'color':'blue', 'char': '#',
                             'words': [i for i in lexicon.keys() if lexicon[i] in ['1', '2', '3', '4', '5']],
                              'lexicon': lexicon},
             'geography_scroll': {'name': 'Scroll of Moving', 'item_type': 'scroll', 'color':'yellow', 'char': '#',
@@ -117,6 +118,9 @@ def place_entities(room, entities, dungeon_level, colors, lexicon):
             'invisibility_scroll': {'name': 'Scroll of Invisibility', 'item_type': 'scroll', 'color':'white', 'char': '#',
                             'words': [i for i in lexicon.keys() if lexicon[i] in ['invisibility']],
                              'lexicon': lexicon},
+            'skeleton_scroll': {'name': 'Scroll of Raise Skeleton', 'item_type': 'scroll', 'color': 'black', 'char': '#',
+                            'words': [i for i in lexicon.keys() if lexicon[i] in ['skeleton']],
+                            'lexicon': lexicon},
             }
 
     for i in range(number_of_monsters):
