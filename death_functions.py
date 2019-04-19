@@ -16,13 +16,22 @@ def kill_player(player, colors):
 def kill_monster(monster, entities, colors):
     death_message = Message('{0} is dead!'.format(monster.name.capitalize()), colors.get('orange'))
 
-    monster.char = '%'
-    monster.color = colors.get('dark_red')
-    monster.blocks = False
-    monster.fighter = None
-    monster.ai = None
-    monster.name = 'remains of ' + monster.name
-    monster.render_order = RenderOrder.CORPSE
+    if any(word for word in monster.name.split() if word == 'skeleton'):
+        monster.char = ':'
+        monster.color = colors.get('white')
+        monster.blocks = False
+        monster.fighter = None
+        monster.ai = None
+        monster.name = 'dust of ' + monster.name
+        monster.render_order = RenderOrder.CORPSE
+    else:
+        monster.char = '%'
+        monster.color = colors.get('dark_red')
+        monster.blocks = False
+        monster.fighter = None
+        monster.ai = None
+        monster.name = 'remains of ' + monster.name
+        monster.render_order = RenderOrder.CORPSE
 
     if monster.inventory:
         for i in monster.inventory.items:
@@ -31,7 +40,7 @@ def kill_monster(monster, entities, colors):
 
     return death_message
 
-def raise_monster_skeleton(monster, entities, colors):
+def raise_monster_skeleton(monster, life_turns, entities, colors):
     origin = monster.name.split()[2].lower()
     monster.char = 's'
     monster.color = colors.get('white')
@@ -40,7 +49,7 @@ def raise_monster_skeleton(monster, entities, colors):
     fighter_component.owner = monster
     #basic_ai = BasicMonster()
     #basic_ai.owner = monster
-    ai_component = AlliedMonster()
+    ai_component = AlliedMonster(life_turns)
     ai_component.owner = monster
     monster.fighter = fighter_component
     monster.ai = ai_component

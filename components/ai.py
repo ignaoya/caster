@@ -14,7 +14,7 @@ class BasicMonster:
         monster = self.owner
         target_allies = [entity for entity in entities if entity.ai and entity.ai.ally]
         target_allies.append(target)
-        if self.target is None or self.target.name.split()[0] == 'remains':
+        if self.target is None or self.target.name.split()[0] in ['remains', 'dust']:
             self.target = target
         for entity in target_allies:
             if monster.distance_to(entity) < monster.distance_to(self.target):
@@ -67,9 +67,10 @@ class ConfusedMonster:
 
 class AlliedMonster:
 
-    def __init__(self):
+    def __init__(self, life_turns=None):
         self.ally = True
         self.target = None
+        self.life_turns = life_turns
 
     def take_turn(self, player, game_map, entities):
         results = []
@@ -90,5 +91,11 @@ class AlliedMonster:
         else:
             if monster.distance_to(player) >= 3:
                 monster.move_towards(player.x, player.y, game_map, entities)
+
+        if self.life_turns is not None:
+            self.life_turns -= 1
+            if self.life_turns <= 0:
+                results.append({'dead': self.owner})
+                results.append({'message': Message('The {0} returns to dust.'.format(self.owner.name))})
             
         return results

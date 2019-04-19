@@ -129,6 +129,7 @@ def cast_raise_skeleton(*args, **kwargs):
     entities = kwargs.get('entities')
     game_map = kwargs.get('game_map')
     maximum_range = kwargs.get('maximum_range')
+    life_turns = kwargs.get('life_turns')
 
     results = []
 
@@ -146,7 +147,7 @@ def cast_raise_skeleton(*args, **kwargs):
     if target:
         results.append({'target': target, 'message': Message(
             "You make a pact with death. I hope you know what you're doing.", colors.get('green'))})
-        results.append(raise_monster_skeleton(target, entities, colors))
+        results.append(raise_monster_skeleton(target, life_turns, entities, colors))
     else:
         results.append({'target': None, 'message': Message(
             'No corpse is close enough to raise.', colors.get('red'))})
