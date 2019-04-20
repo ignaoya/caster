@@ -17,10 +17,16 @@ from random_utils import from_dungeon_level, random_choice_from_dict
 from game_messages import Message
 
 
-monsters = {'orc': {'name': 'Orc', 'hp': 20, 'defense': 0, 'power': 4, 'xp': 35, 'item_probability': 5,
+monsters = {'spider': {'name': 'Spider', 'hp': 5, 'defense': 0, 'power': 2, 'xp': 35, 'item_probability': 100,
+                    'item_level': 1, 'color': 'black', 'char': 's'},
+            'goblin': {'name': 'Goblin', 'hp': 10, 'defense': 0, 'power': 3, 'xp': 35, 'item_probability': 10,
+                    'item_level': 1, 'color': 'desaturated_green', 'char': 'g'},
+            'orc': {'name': 'Orc', 'hp': 20, 'defense': 0, 'power': 4, 'xp': 35, 'item_probability': 5,
                     'item_level': 1, 'color': 'desaturated_green', 'char': 'o'},
             'troll': {'name': 'Troll', 'hp': 30, 'defense': 2, 'power': 8, 'xp': 100, 'item_probability': 2,
-                    'item_level': 2, 'color': 'desaturated_green', 'char': 'T'},
+                    'item_level': 2, 'color': 'darkness', 'char': 't'},
+            'daemon': {'name': 'Daemon', 'hp': 100, 'defense': 4, 'power': 20, 'xp': 200, 'item_probability': 1,
+                    'item_level': 2, 'color': 'darker_orange', 'char': 'D'}
                     }
 
 class GameMap(Map):
@@ -71,8 +77,11 @@ def place_entities(room, entities, dungeon_level, colors, lexicon):
     number_of_items = randint(0, max_items_per_room)
 
     monster_chances  = {
+            'spider': from_dungeon_level([[100,1], [80, 3], [50, 6], [10, 8]], dungeon_level),
+            'goblin': from_dungeon_level([[90,1], [70, 3], [40, 6], [0, 8]], dungeon_level),
             'orc': 80, 
             'troll': from_dungeon_level([[15,3], [30, 5], [60, 7]], dungeon_level),
+            'daemon': from_dungeon_level([[15,8], [30, 10], [60, 15]], dungeon_level),
             }
 
     item_chances = {
