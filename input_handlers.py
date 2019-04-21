@@ -19,6 +19,8 @@ def handle_keys(user_input, game_state, *args):
             return handle_character_screen(user_input)
         elif game_state == GameStates.CASTING_SPELL:
             return handle_spell_casting(user_input)
+        elif game_state == GameStates.READ_SCROLL:
+            return handle_read_scroll(user_input)
 
     return {}
 
@@ -180,4 +182,10 @@ def handle_spell_casting(user_input):
         letter = user_input.char
         return {'letter': letter}
     
+    return {}
+
+def handle_read_scroll(user_input):
+    if user_input.key == 'ESCAPE':
+        return {'exit': True}
+
     return {}

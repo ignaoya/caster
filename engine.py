@@ -104,6 +104,8 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
 
     verse = ''
 
+    reading_scroll = None
+
     #uncomment the next line to facilitate manual testing of new spells
     #print(lexicon)
 
@@ -115,7 +117,7 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
         render_all(con, panel, entities, player, game_map, fov_recompute, root_console, message_log, 
                    constants['screen_width'], constants['screen_height'], constants['bar_width'],
                    constants['panel_height'], constants['panel_y'], mouse_coordinates, constants['colors'],
-                   game_state)
+                   game_state, reading_scroll)
         tdl.flush()
 
         clear_all(con, entities)
@@ -224,7 +226,11 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
             item = player.inventory.items[inventory_index]
 
             if game_state == GameStates.SHOW_INVENTORY:
-                player_turn_results.extend(player.inventory.use(item, constants['colors'], entities=entities, game_map=game_map))
+                if item.name.split()[0] == 'Scroll':
+                    game_state = GameStates.READ_SCROLL
+                    reading_scroll = item
+                else:
+                    player_turn_results.extend(player.inventory.use(item, constants['colors'], entities=entities, game_map=game_map))
             elif game_state == GameStates.DROP_INVENTORY:
                 player_turn_results.extend(player.inventory.drop_item(item, constants['colors']))
 
@@ -319,6 +325,8 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
                 game_state = previous_game_state
             elif game_state == GameStates.TARGETING:
                 player_turn_results.append({'targeting_cancelled': True})
+            elif game_state == GameStates.READ_SCROLL:
+                game_state = GameStates.PLAYERS_TURN
             else:
                 save_game(player, entities, game_map, message_log, game_state, lexicon)
                 return True
@@ -420,7 +428,6 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
                         make_visible = True
 
                 game_state = GameStates.ENEMY_TURN
-
 
             if equip:
                 equip_results = player.equipment.toggle_equip(equip)

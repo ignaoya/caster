@@ -2,7 +2,7 @@ from enum import Enum
 
 from game_states import GameStates
 
-from menus import character_screen, inventory_menu, level_up_menu, magic_level_up_menu
+from menus import character_screen, inventory_menu, level_up_menu, magic_level_up_menu, scroll_menu
 
 class RenderOrder(Enum):
     STAIRS = 1
@@ -37,7 +37,7 @@ def render_bar(panel, x, y, total_width, name, value, maximum, bar_color, back_c
     panel.draw_str(x_centered, y, text, fg=string_color, bg=None)
 
 def render_all(con, panel, entities, player, game_map, fov_recompute, root_console, message_log,
-               screen_width, screen_height, bar_width, panel_height, panel_y, mouse_coordinates, colors, game_state):
+               screen_width, screen_height, bar_width, panel_height, panel_y, mouse_coordinates, colors, game_state, reading_scroll):
     # Draw all the tiles in the game map
     if fov_recompute:
         for x, y in game_map:
@@ -100,6 +100,8 @@ def render_all(con, panel, entities, player, game_map, fov_recompute, root_conso
 
     elif game_state == GameStates.CHARACTER_SCREEN:
         character_screen(root_console, player, 60, 11, screen_width, screen_height)
+    elif game_state == GameStates.READ_SCROLL:
+        scroll_menu(con, root_console, reading_scroll, 60, screen_width, screen_height)
 
 
 def clear_all(con, entities):
