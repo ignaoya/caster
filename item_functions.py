@@ -3,18 +3,20 @@ from components.ai import ConfusedMonster
 
 
 
+""" DEPRECATED FUNCTION!!!! 
+
 def read(*args, **kwargs):
-    lexicon = kwargs.get('lexicon')
-    words = kwargs.get('word')
+    text = kwargs.get('text')
     colors = args[1]
 
     results = []
 
-    for word in words:
+    for sentence in text:
         results.append({'message': Message('The magic word for {0} is {1}'.format(
                                     lexicon[word], word), colors.get('white'))})
 
     return results
+"""
     
 def heal(*args, **kwargs):
     entity = args[0]

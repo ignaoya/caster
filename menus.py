@@ -76,10 +76,7 @@ def magic_level_up_menu(con, root, header, player, menu_width, screen_width, scr
 
 def scroll_menu(con, root, scroll, menu_width, screen_width, screen_height):
     header = scroll.name
-    lexicon = scroll.item.function_kwargs.get('lexicon')
-    words = scroll.item.function_kwargs.get('word')
-    options = ['The magical word for {} is {}'.format(lexicon[word], word) for word in words]
-
+    options = scroll.item.function_kwargs.get('text')
     menu(con, root, header, options, menu_width, screen_width, screen_height)
 
 def character_screen(root_console, player, character_screen_width, character_screen_height, screen_width,

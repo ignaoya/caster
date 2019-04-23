@@ -12,7 +12,7 @@ from components.inventory import Inventory
 from components.equipment import Equipment, EquipmentSlots
 from components.equippable import Equippable
 from entity import Entity
-from item_functions import heal, read, restore
+from item_functions import heal, restore
 from random_utils import from_dungeon_level, random_choice_from_dict
 from game_messages import Message
 
@@ -114,13 +114,14 @@ def place_entities(room, entities, dungeon_level, colors, lexicon):
                        'bonuses': {'defense': 1}, 'slot': EquipmentSlots.OFF_HAND},
             'fire_scroll': {'name': 'Scroll of Fire', 'item_type': 'scroll', 'color':'red', 'char': '#',
                             'words': [i for i in lexicon.keys() if lexicon[i] in ['fireball', 'burn']],
-                             'lexicon': lexicon},
+                            'lexicon': lexicon, 'addendum': ['Add cardinal directions to set epicenter', 
+                                                             'Burn enhances damage']},
             'lightning_scroll': {'name': 'Scroll of Lightning', 'item_type': 'scroll', 'color':'sky', 'char': '#',
                             'words': [i for i in lexicon.keys() if lexicon[i] in ['lightning']],
-                             'lexicon': lexicon},
+                            'lexicon': lexicon, 'addendum': ['Add one number to set max range and increase power']},
             'numbers_scroll': {'name': 'Scroll of Counting', 'item_type': 'scroll', 'color':'blue', 'char': '#',
                             'words': [i for i in lexicon.keys() if lexicon[i] in ['1', '2', '3', '4', '5']],
-                             'lexicon': lexicon},
+                            'lexicon': lexicon},
             'geography_scroll': {'name': 'Scroll of Moving', 'item_type': 'scroll', 'color':'yellow', 'char': '#',
                             'words': [i for i in lexicon.keys() if lexicon[i] in ['north', 'south', 'east', 'west']],
                              'lexicon': lexicon},
@@ -310,7 +311,11 @@ def create_item(name, item_type, colors, color, char, x, y, kwargs):
     elif item_type == 'scroll':
         words = kwargs.get('words')
         lexicon = kwargs.get('lexicon')
-        item_component = Item(use_function=read, lexicon=lexicon, word=words)
+        addendum = kwargs.get('addendum')
+        text = ['The magic word for {} is {}.'.format(lexicon[word], word) for word in words]
+        if addendum:
+            text.extend(addendum)
+        item_component = Item(text=text)
         item = Entity(x, y, char, colors.get(color), name, render_order=RenderOrder.ITEM,
                 item=item_component)
 
