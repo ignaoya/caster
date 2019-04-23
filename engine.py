@@ -154,6 +154,7 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
         take_up_stairs = action.get('take_up_stairs')
         level_up = action.get('level_up')
         show_character_screen = action.get('show_character_screen')
+        show_help_screen = action.get('show_help_screen')
         look_around = action.get('look_around')
         cast_spell = action.get('cast_spell')
         letter = action.get('letter')
@@ -310,6 +311,10 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
             previous_game_state = game_state
             game_state = GameStates.CHARACTER_SCREEN
 
+        if show_help_screen:
+            previous_game_state = game_state
+            game_state = GameStates.HELP_SCREEN
+
         if game_state == GameStates.TARGETING:
             if left_click:
                 target_x, target_y = left_click
@@ -321,7 +326,8 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
                 player_turn_results.append({'targeting_cancelled': True})
 
         if exit:
-            if game_state in (GameStates.SHOW_INVENTORY, GameStates.DROP_INVENTORY, GameStates.CHARACTER_SCREEN):
+            if game_state in (GameStates.SHOW_INVENTORY, GameStates.DROP_INVENTORY, GameStates.CHARACTER_SCREEN, 
+                              GameStates.HELP_SCREEN):
                 game_state = previous_game_state
             elif game_state == GameStates.TARGETING:
                 player_turn_results.append({'targeting_cancelled': True})

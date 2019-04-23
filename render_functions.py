@@ -2,7 +2,7 @@ from enum import Enum
 
 from game_states import GameStates
 
-from menus import character_screen, inventory_menu, level_up_menu, magic_level_up_menu, scroll_menu
+from menus import character_screen, help_screen, inventory_menu, level_up_menu, magic_level_up_menu, scroll_menu
 
 class RenderOrder(Enum):
     STAIRS = 1
@@ -100,6 +100,8 @@ def render_all(con, panel, entities, player, game_map, fov_recompute, root_conso
 
     elif game_state == GameStates.CHARACTER_SCREEN:
         character_screen(root_console, player, 60, 11, screen_width, screen_height)
+    elif game_state == GameStates.HELP_SCREEN:
+        help_screen(root_console, 76, 31, screen_width, screen_height)
     elif game_state == GameStates.READ_SCROLL:
         scroll_menu(con, root_console, reading_scroll, 60, screen_width, screen_height)
 

@@ -11,5 +11,6 @@ class GameStates(Enum):
     LEVEL_UP = 7
     MAGIC_LEVEL_UP = 8
     CHARACTER_SCREEN = 9
-    CASTING_SPELL = 10
-    READ_SCROLL = 11
+    HELP_SCREEN = 10
+    CASTING_SPELL = 11
+    READ_SCROLL = 12

@@ -17,6 +17,8 @@ def handle_keys(user_input, game_state, *args):
             return handle_magic_level_up_menu(user_input)
         elif game_state == GameStates.CHARACTER_SCREEN:
             return handle_character_screen(user_input)
+        elif game_state == GameStates.HELP_SCREEN:
+            return handle_help_screen(user_input)
         elif game_state == GameStates.CASTING_SPELL:
             return handle_spell_casting(user_input)
         elif game_state == GameStates.READ_SCROLL:
@@ -71,6 +73,9 @@ def handle_player_turn_keys(user_input):
 
     elif key_char == 'o':
         return {'look_around': True}
+
+    elif key_char == '/' and user_input.shift:
+        return {'show_help_screen': True}
 
     if user_input.key == 'ENTER' and user_input.alt:
         # Alt-Enter: toggle full screen
@@ -172,6 +177,12 @@ def handle_magic_level_up_menu(user_input):
     return {}
 
 def handle_character_screen(user_input):
+    if user_input.key == 'ESCAPE':
+        return {'exit': True}
+
+    return {}
+
+def handle_help_screen(user_input):
     if user_input.key == 'ESCAPE':
         return {'exit': True}
 

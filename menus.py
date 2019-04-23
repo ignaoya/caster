@@ -116,6 +116,51 @@ def character_screen(root_console, player, character_screen_width, character_scr
     y = screen_height // 2 - character_screen_height // 2
     root_console.blit(window, x, y, character_screen_width, character_screen_height, 0, 0)
 
+def help_screen(root_console, character_screen_width, character_screen_height, screen_width, screen_height):
+
+    window = tdl.Console(character_screen_width, character_screen_height)
+
+    window.draw_rect(0, 0, character_screen_width, character_screen_height, None, fg=(255,255,255), bg=None)
+
+    window.draw_str(0, 1, 'Controls')
+    window.draw_str(0, 3, '(h,j,k,l) -> left, down, up and right.')
+    window.draw_str(0, 4, '(y,u,b,n) -> diagonal directions.')
+    window.draw_str(0, 6, '(z) -> wait a turn or drink from fountain.')
+    window.draw_str(0, 8, '(g) -> pickup item.')
+    window.draw_str(0, 10, '(i) -> show inventory.')
+    window.draw_str(0, 11, 'While inventory: (a-z) use or equip item.')
+    window.draw_str(0, 13, '(d) -> show inventory to drop item.')
+    window.draw_str(0, 14, 'While drop open: (a-z) drop item.')
+    window.draw_str(0, 16, '(>) -> take down-stairs.')
+    window.draw_str(0, 17, '(<) -> take up-stairs.')
+    window.draw_str(0, 19, '(c) -> show character screen.')
+    window.draw_str(0, 21, '(o) -> look around.')
+    window.draw_str(0, 23, '(s) -> start casting spell.')
+    window.draw_str(0, 24, 'While casting: write magic words.')
+    window.draw_str(0, 25, 'Magic words are found in scrolls.')
+    window.draw_str(0, 26, 'While casting: (.) -> end spell.')
+    window.draw_str(0, 28, '(?) -> Show this help screen.')
+    window.draw_str(0, 30, '(Esc) -> exit menus or save+quit.')
+    window.draw_str(46, 1, 'Symbols')
+    window.draw_str(46, 3, '@ -> player character.')
+    window.draw_str(46, 5, '> -> down-staircase.')
+    window.draw_str(46, 7, '< -> up-staircase.')
+    window.draw_str(46, 9, '+ -> fountain.')
+    window.draw_str(46, 11, '! -> potion(life or mana).')
+    window.draw_str(46, 13, '# -> magic scroll.')
+    window.draw_str(46, 15, '/ -> sword.')
+    window.draw_str(46, 17, '- -> dagger.')
+    window.draw_str(46, 19, '] -> shield.')
+    window.draw_str(46, 21, 's -> spider or skeleten.')
+    window.draw_str(46, 23, 'g -> goblin.')
+    window.draw_str(46, 25, 'o -> orc.')
+    window.draw_str(46, 27, 't -> troll.')
+    window.draw_str(46, 29, 'D -> Daemon.')
+
+    x = screen_width // 2 - character_screen_width // 2
+    y = screen_height // 2 - character_screen_height // 2
+    root_console.blit(window, x, y, character_screen_width, character_screen_height, 0, 0)
+
 def message_box(con, root_console, header, width, screen_width, screen_height):
     menu(con, root_console, header, [], width, screen_width, screen_height)
 
