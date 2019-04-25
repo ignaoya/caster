@@ -40,6 +40,7 @@ def main():
 
     main_menu_background_image = image_load('resources/menu_background1.png')
 
+
     while not tdl.event.is_window_closed():
         for event in tdl.event.get():
             if event.type == 'KEYDOWN':
@@ -97,6 +98,8 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
     mouse_coordinates = (0,0)
 
     previous_game_state = game_state
+
+    game_state = GameStates.HELP_SCREEN
 
     targeting_item = None
 
