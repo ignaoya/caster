@@ -50,7 +50,7 @@ def handle_player_turn_keys(user_input):
     elif key_char == 'z':
         return {'wait': True}
 
-    if key_char == 'g':
+    elif key_char == 'g':
         return {'pickup': True}
 
     elif key_char == 'i':
@@ -77,7 +77,7 @@ def handle_player_turn_keys(user_input):
     elif key_char == '/' and user_input.shift:
         return {'show_help_screen': True}
 
-    if user_input.key == 'ENTER' and user_input.alt:
+    elif user_input.key == 'ENTER' and user_input.alt:
         # Alt-Enter: toggle full screen
         return {'fullscreen': True}
     elif user_input.key == 'ESCAPE':
@@ -99,7 +99,7 @@ def handle_player_dead_keys(user_input):
     if key_char == 'i':
         return {'show_inventory': True}
 
-    if user_input.key == 'ENTER' and user_input.alt: 
+    elif user_input.key == 'ENTER' and user_input.alt: 
         # Alt-Enter: toggle full screen
         return {'fullscreen': True}
     elif user_input.key == 'ESCAPE':

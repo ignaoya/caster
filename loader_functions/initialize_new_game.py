@@ -1,6 +1,7 @@
 from components.equipment import Equipment
 from components.equippable import Equippable
 from components.fighter import Fighter
+from components.body import Body
 from components.inventory import Inventory
 from components.level import Level
 from components.caster import Caster
@@ -105,10 +106,11 @@ def get_game_variables(constants):
     level_component = Level()
     equipment_component = Equipment()
     caster_component = Caster(mana=5, focus=2)
+    body_component = Body()
 
     player = Entity(0,0, '@', (255,255,255), 'Player', blocks=True, render_order=RenderOrder.ACTOR,
             fighter=fighter_component, caster=caster_component, inventory=inventory_component, level=level_component,
-            equipment=equipment_component)
+            equipment=equipment_component, body=body_component)
     entities = [player]
 
     equippable_component = Equippable(EquipmentSlots.MAIN_HAND, power_bonus=1)

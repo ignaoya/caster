@@ -99,7 +99,7 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
 
     previous_game_state = game_state
 
-    game_state = GameStates.HELP_SCREEN
+    #game_state = GameStates.HELP_SCREEN
 
     targeting_item = None
 
@@ -108,6 +108,8 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
     verse = ''
 
     reading_scroll = None
+
+    message_log.add_message(Message("Press '?' for Help Screen"))
 
     #uncomment the next line to facilitate manual testing of new spells
     #print(lexicon)

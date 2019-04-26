@@ -5,6 +5,7 @@ from tdl.map import Map
 from render_functions import RenderOrder
 from components.ai import BasicMonster
 from components.fighter import Fighter
+from components.body import Body
 from components.item import Item
 from components.stairs import Stairs
 from components.fountain import Fountain
@@ -272,6 +273,7 @@ def next_floor(player, message_log, dungeon_level, constants, lexicon, direction
 def create_monster(name, hp, defense, power, xp, item_probability, item_level, colors, color, char, x, y):
     fighter_component = Fighter(hp=hp, defense=defense, power=power, xp=xp)
     ai_component = BasicMonster()
+    body_component = Body()
     if randint(1, item_probability) == item_probability:
         inventory_component = Inventory(1)
         equipment_component = Equipment()
@@ -281,10 +283,10 @@ def create_monster(name, hp, defense, power, xp, item_probability, item_level, c
         inventory_component.add_item(loot, colors)
         monster = Entity(x, y, char, colors.get(color), name, blocks=True,
                          render_order=RenderOrder.ACTOR, fighter=fighter_component, inventory=inventory_component,
-                         equipment=equipment_component, ai=ai_component)
+                         equipment=equipment_component, ai=ai_component, body=body_component)
     else:
         monster = Entity(x, y, char, colors.get(color), name, blocks=True,
-                         render_order=RenderOrder.ACTOR, fighter=fighter_component, ai=ai_component)
+                         render_order=RenderOrder.ACTOR, fighter=fighter_component, ai=ai_component, body=body_component)
     
     return monster
 
