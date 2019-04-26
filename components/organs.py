@@ -2,23 +2,24 @@ from game_messages import Message
 from components.organ_states import OrganStates
 
 class Organ:
-    def __init__(self, name, vital=False, state=OrganStates.PERFECT):
+    def __init__(self, name, state=OrganStates.PERFECT, vital=False):
         self.name = name
         self.state = state
+        self.vital = vital
 
     def reduce_state(self, levels):
-        val = self.state.value + levels
-        try:
-            self.state = OrganStates(val)
-        except:
-            val -= 1
-            self.reduce_state(val)
+        val = min([self.state.value + levels, 5])
+        result = []
+        self.state = OrganStates(val)
+        result.append({'message': Message("The {}'s {} is now {}".format(self.owner.owner.name, self.name, self.state.name))})
+
+        return result
 
     def improve_state(self, levels):
         if self.state == OrganStates.LOST:
             message = "The {}'s {} cannot be recovered.".format(self.owner.owner.name, self.name)
             return [{'message': Message(message)}]
         else:
-            val = self.state.value - levels
-            self.state = States(max([1, val]))
+            val = max([self.state.value - levels, 1])
+            self.state = States(val)
 

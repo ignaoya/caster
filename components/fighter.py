@@ -1,4 +1,6 @@
+from random import choice, randint
 from game_messages import Message
+from components.organ_states import OrganStates
 
 class Fighter:
     def __init__(self, hp, defense, power, xp=0, visible=True):
@@ -40,9 +42,17 @@ class Fighter:
     def take_damage(self, amount):
         results = []
 
-        self.hp -= amount
+        organ_dam_prob = ((self.max_hp - self.hp) / self.max_hp) * 100
+        self.hp = max([self.hp - amount, 0])
 
-        if self.hp <= 0:
+        if randint(1, 100) <= organ_dam_prob:
+            if organ_dam_prob < 100:
+                dam_level = randint(1,2) 
+            else:
+                dam_level = randint(2,4)
+            results.extend(choice(self.owner.body.organs).reduce_state(dam_level))
+
+        if any(i for i in self.owner.body.organs if i.state == OrganStates.LOST and i.vital):
             results.append({'dead': self.owner})
 
         return results
