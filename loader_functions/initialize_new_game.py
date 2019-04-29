@@ -106,7 +106,7 @@ def get_game_variables(constants):
     level_component = Level()
     equipment_component = Equipment()
     caster_component = Caster(mana=5, focus=2)
-    body_component = Body()
+    body_component = Body('anthropod')
 
     player = Entity(0,0, '@', (255,255,255), 'Player', blocks=True, render_order=RenderOrder.ACTOR,
             fighter=fighter_component, caster=caster_component, inventory=inventory_component, level=level_component,

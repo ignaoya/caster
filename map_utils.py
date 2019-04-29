@@ -19,15 +19,15 @@ from game_messages import Message
 
 
 monsters = {'spider': {'name': 'Spider', 'hp': 5, 'defense': 0, 'power': 2, 'xp': 35, 'item_probability': 100,
-                    'item_level': 1, 'color': 'black', 'char': 's'},
+    'item_level': 1, 'color': 'black', 'char': 's', 'body': 'octopod'},
             'goblin': {'name': 'Goblin', 'hp': 10, 'defense': 0, 'power': 3, 'xp': 35, 'item_probability': 10,
-                    'item_level': 1, 'color': 'desaturated_green', 'char': 'g'},
+                'item_level': 1, 'color': 'desaturated_green', 'char': 'g', 'body': 'anthropod'},
             'orc': {'name': 'Orc', 'hp': 20, 'defense': 0, 'power': 4, 'xp': 35, 'item_probability': 5,
-                    'item_level': 1, 'color': 'desaturated_green', 'char': 'o'},
+                'item_level': 1, 'color': 'desaturated_green', 'char': 'o', 'body': 'anthropod'},
             'troll': {'name': 'Troll', 'hp': 30, 'defense': 2, 'power': 8, 'xp': 100, 'item_probability': 2,
-                    'item_level': 2, 'color': 'darkness', 'char': 't'},
+                'item_level': 2, 'color': 'darkness', 'char': 't', 'body': 'anthropod'},
             'daemon': {'name': 'Daemon', 'hp': 100, 'defense': 4, 'power': 20, 'xp': 200, 'item_probability': 1,
-                    'item_level': 2, 'color': 'darker_orange', 'char': 'D'}
+                'item_level': 2, 'color': 'darker_orange', 'char': 'D', 'body': 'anthropod'}
                     }
 
 class GameMap(Map):
@@ -143,7 +143,7 @@ def place_entities(room, entities, dungeon_level, colors, lexicon):
             n = random_choice_from_dict(monster_chances)
             monster = create_monster(monsters[n]['name'], monsters[n]['hp'], monsters[n]['defense'], 
                     monsters[n]['power'], monsters[n]['xp'], monsters[n]['item_probability'], monsters[n]['item_level'],
-                    colors, monsters[n]['color'], monsters[n]['char'], x, y)
+                    colors, monsters[n]['color'], monsters[n]['char'], x, y, monsters[n]['body'])
             entities.append(monster)
 
     for i in range(number_of_items):
@@ -270,10 +270,10 @@ def next_floor(player, message_log, dungeon_level, constants, lexicon, direction
 
     return game_map, entities
 
-def create_monster(name, hp, defense, power, xp, item_probability, item_level, colors, color, char, x, y):
+def create_monster(name, hp, defense, power, xp, item_probability, item_level, colors, color, char, x, y, body_type):
     fighter_component = Fighter(hp=hp, defense=defense, power=power, xp=xp)
     ai_component = BasicMonster()
-    body_component = Body()
+    body_component = Body(body_type)
     if randint(1, item_probability) == item_probability:
         inventory_component = Inventory(1)
         equipment_component = Equipment()
