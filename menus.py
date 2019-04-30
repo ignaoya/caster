@@ -116,6 +116,35 @@ def character_screen(root_console, player, character_screen_width, character_scr
     y = screen_height // 2 - character_screen_height // 2
     root_console.blit(window, x, y, character_screen_width, character_screen_height, 0, 0)
 
+def body_screen(root_console, player, character_screen_width, character_screen_height, screen_width,
+                     screen_height):
+    window = tdl.Console(character_screen_width, character_screen_height)
+
+    window.draw_rect(0, 0, character_screen_width, character_screen_height, None, fg=(255,255,255), bg=None)
+
+    window.draw_str(0, 1, 'Body Health Information')
+    window.draw_str(0, 2, 'Limbs And Non-Vital Organs')
+    window.draw_str(0, 3, 'Blood: {0}'.format(player.body.blood))
+    window.draw_str(0, 4, 'Left Leg: {0}'.format(player.body.l_leg.state.name))
+    window.draw_str(0, 5, 'Right Leg: {0}'.format(player.body.r_leg.state.name))
+    window.draw_str(0, 7, 'Left Arm: {0}'.format(player.body.l_arm.state.name))
+    window.draw_str(0, 8, 'Right Arm: {0}'.format(player.body.r_arm.state.name))
+    window.draw_str(0, 9, 'Left Eye: {0}'.format(player.body.l_eye.state.name))
+    window.draw_str(0, 10, 'Right Eye: {0}'.format(player.body.r_eye.state.name))
+    window.draw_str(0, 11, 'Left Ear: {0}'.format(player.body.l_ear.state.name))
+    window.draw_str(0, 12, 'Right Ear: {0}'.format(player.body.r_ear.state.name))
+    window.draw_str(0, 13, 'Kidneys: {0}'.format(player.body.kidneys.state.name))
+    window.draw_str(31, 2, 'Vital Organs')
+    window.draw_str(31, 3, 'Heart: {0}'.format(player.body.heart.state.name))
+    window.draw_str(31, 4, 'Brain: {0}'.format(player.body.brain.state.name))
+    window.draw_str(31, 5, 'Stomach: {0}'.format(player.body.stomach.state.name))
+    window.draw_str(31, 6, 'Lungs: {0}'.format(player.body.lungs.state.name))
+    window.draw_str(31, 7, 'Liver: {0}'.format(player.body.liver.state.name))
+
+    x = screen_width // 2 - character_screen_width // 2
+    y = screen_height // 2 - character_screen_height // 2
+    root_console.blit(window, x, y, character_screen_width, character_screen_height, 0, 0)
+
 def help_screen(root_console, character_screen_width, character_screen_height, screen_width, screen_height):
 
     window = tdl.Console(character_screen_width, character_screen_height)

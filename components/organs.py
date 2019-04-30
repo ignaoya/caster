@@ -11,7 +11,10 @@ class Organ:
         val = min([self.state.value + levels, 5])
         result = []
         self.state = OrganStates(val)
-        result.append({'message': Message("The {}'s {} is now {}".format(self.owner.owner.name, self.name, self.state.name))})
+        if self.name[-1] == 's':
+            result.append({'message': Message("The {}'s {} are now {}".format(self.owner.owner.name, self.name, self.state.name))})
+        else:
+            result.append({'message': Message("The {}'s {} is now {}".format(self.owner.owner.name, self.name, self.state.name))})
 
         return result
 
@@ -21,5 +24,5 @@ class Organ:
             return [{'message': Message(message)}]
         else:
             val = max([self.state.value - levels, 1])
-            self.state = States(val)
+            self.state = OrganStates(val)
 

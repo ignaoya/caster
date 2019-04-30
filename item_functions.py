@@ -25,10 +25,12 @@ def heal(*args, **kwargs):
 
     results = []
 
-    if entity.fighter.hp == entity.fighter.max_hp:
+    if entity.fighter.hp == entity.fighter.max_hp and not any(organ for organ in entity.body.organs if organ.state.name != 'PERFECT'):
         results.append({'consumed': False, 'message': Message('You are already at full health', colors.get('yellow'))})
     else:
         entity.fighter.heal(amount)
+        for organ in entity.body.organs:
+            organ.improve_state(1)
         results.append({'consumed': True, 'message': Message('Your wounds start to feel better!', colors.get('green'))})
 
     return results

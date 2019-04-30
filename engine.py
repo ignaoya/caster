@@ -93,6 +93,11 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
     tdl.set_font('resources/arial10x10.png', greyscale=True, altLayout=True)
 
     fov_recompute = True
+    fov_radius = 2
+    if player.body.l_eye.state.name != 'LOST':
+        fov_radius += 9
+    if player.body.r_eye.state.name != 'LOST':
+        fov_radius += 9
 
 
     mouse_coordinates = (0,0)
@@ -116,7 +121,12 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
 
     while not tdl.event.is_window_closed():
         if fov_recompute:
-            game_map.compute_fov(player.x, player.y, fov=constants['fov_algorithm'], radius=constants['fov_radius'],
+            fov_radius = 2
+            if player.body.l_eye.state.name != 'LOST':
+                fov_radius += 4
+            if player.body.r_eye.state.name != 'LOST':
+                fov_radius += 4
+            game_map.compute_fov(player.x, player.y, fov=constants['fov_algorithm'], radius=fov_radius,
                     light_walls=constants['fov_light_walls'])
 
         render_all(con, panel, entities, player, game_map, fov_recompute, root_console, message_log, 
@@ -159,6 +169,7 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
         take_up_stairs = action.get('take_up_stairs')
         level_up = action.get('level_up')
         show_character_screen = action.get('show_character_screen')
+        show_body_screen = action.get('show_body_screen')
         show_help_screen = action.get('show_help_screen')
         look_around = action.get('look_around')
         cast_spell = action.get('cast_spell')
@@ -316,6 +327,10 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
             previous_game_state = game_state
             game_state = GameStates.CHARACTER_SCREEN
 
+        if show_body_screen:
+            previous_game_state = game_state
+            game_state = GameStates.BODY_SCREEN
+
         if show_help_screen:
             previous_game_state = game_state
             game_state = GameStates.HELP_SCREEN
@@ -332,7 +347,7 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
 
         if exit:
             if game_state in (GameStates.SHOW_INVENTORY, GameStates.DROP_INVENTORY, GameStates.CHARACTER_SCREEN, 
-                              GameStates.HELP_SCREEN):
+                              GameStates.HELP_SCREEN, GameStates.BODY_SCREEN):
                 game_state = previous_game_state
             elif game_state == GameStates.TARGETING:
                 player_turn_results.append({'targeting_cancelled': True})
