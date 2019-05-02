@@ -39,10 +39,10 @@ class Body:
         elif body_type == 'octopod':
             self.max_blood = max_blood
             self.blood = max_blood
-            self.l_legs = Organ('four left legs')
-            self.l_legs.owner = self
-            self.r_legs = Organ('four right legs')
-            self.r_legs.owner = self
+            self.l_arm = Organ('four left legs')
+            self.l_arm.owner = self
+            self.r_arm = Organ('four right legs')
+            self.r_arm.owner = self
             self.heart = Organ('heart', vital=True)
             self.heart.owner = self
             self.brain = Organ('brain', vital=True)
@@ -63,7 +63,7 @@ class Body:
             self.liver.owner = self
             self.kidneys = Organ('kindneys')
             self.kidneys.owner = self
-            self.organs.extend([self.l_legs, self.r_legs, self.heart, self.brain, self.l_eyes, self.r_eyes, 
+            self.organs.extend([self.l_arm, self.r_arm, self.heart, self.brain, self.l_eyes, self.r_eyes, 
                                 self.l_ear, self.r_ear, self.stomach, self.lungs, self.liver, self.kidneys])
         elif body_type == 'anthropod_skeleton':
             self.max_blood = 0
@@ -82,12 +82,12 @@ class Body:
         elif body_type == 'octopod_skeleton':
             self.max_blood = 0
             self.blood = max_blood
-            self.l_legs = Organ('four left legs')
-            self.l_legs.owner = self
-            self.r_legs = Organ('four right legs')
-            self.r_legs.owner = self
+            self.l_arm = Organ('four left legs')
+            self.l_arm.owner = self
+            self.r_arm = Organ('four right legs')
+            self.r_arm.owner = self
             self.skull = Organ('skull', vital=True)
-            self.organs.extend([self.l_legs, self.r_legs, self.skull])
+            self.organs.extend([self.l_arm, self.r_arm, self.skull])
 
     def take_turn(self):
         for i in self.organs:
