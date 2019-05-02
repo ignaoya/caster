@@ -3,7 +3,7 @@ import tdl
 from tcod import image_load
 
 from loader_functions.initialize_new_game import get_constants, get_game_variables
-from loader_functions.data_loaders import load_game, save_game
+from loader_functions.data_loaders import load_game, save_game, save_floor, erase_floor_file
 from magic.lexicons import translate
 from map_utils import next_floor
 from menus import main_menu, message_box
@@ -68,6 +68,7 @@ def main():
             if show_load_error_message and (new_game or load_saved_game or exit_game):
                 show_load_error_message = False
             elif new_game:
+                erase_floor_file()
                 player, entities, game_map, message_log, game_state, lexicon = get_game_variables(constants)
                 game_state = GameStates.PLAYERS_TURN
 
@@ -280,6 +281,7 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
             for entity in entities:
                 if entity.stairs and entity.x == player.x and entity.y == player.y:
                     if entity.stairs.direction == 'down':
+                        save_floor(player, entities, game_map)
                         game_map, entities = next_floor(player, message_log, entity.stairs.floor, constants, lexicon, 'down')
                         fov_recompute = True
                         con.clear()
@@ -295,6 +297,7 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
             for entity in entities:
                 if entity.stairs and entity.x == player.x and entity.y == player.y:
                     if entity.stairs.direction == 'up':
+                        save_floor(player, entities, game_map)
                         game_map, entities = next_floor(player, message_log, entity.stairs.floor, constants, lexicon, 'up')
                         fov_recompute = True
                         con.clear()

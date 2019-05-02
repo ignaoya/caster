@@ -16,6 +16,7 @@ from entity import Entity
 from item_functions import heal, restore
 from random_utils import from_dungeon_level, random_choice_from_dict
 from game_messages import Message
+from loader_functions.data_loaders import load_floor
 
 
 monsters = {'spider': {'name': 'Spider', 'hp': 5, 'defense': 0, 'power': 2, 'xp': 35, 'item_probability': 100,
@@ -256,17 +257,29 @@ def make_map(game_map, max_rooms, room_min_size, room_max_size, map_width, map_h
     entities.append(fountain)
 
 def next_floor(player, message_log, dungeon_level, constants, lexicon, direction):
-    game_map = GameMap(constants['map_width'], constants['map_height'], dungeon_level)
-    entities = [player]
+    game_map, entities, player_index = load_floor(dungeon_level)
+    if game_map is not None:
+        entities[player_index] = player
+        if direction == 'down':
+            start_loc = [(i.x, i.y) for i in entities if i.name == 'Up Stairs']
+            player.x = start_loc[0][0]
+            player.y = start_loc[0][1]
+        elif direction == 'up':
+            start_loc = [(i.x, i.y) for i in entities if i.name == 'Down Stairs']
+            player.x = start_loc[0][0]
+            player.y = start_loc[0][1]
+    else:
+        game_map = GameMap(constants['map_width'], constants['map_height'], dungeon_level)
+        entities = [player]
 
-    make_map(game_map, constants['max_rooms'], constants['room_min_size'],
-             constants['room_max_size'], constants['map_width'], constants['map_height'], player,
-             entities, constants['colors'], lexicon, direction)
+        make_map(game_map, constants['max_rooms'], constants['room_min_size'],
+                 constants['room_max_size'], constants['map_width'], constants['map_height'], player,
+                 entities, constants['colors'], lexicon, direction)
 
-    player.fighter.heal(player.fighter.max_hp // 2)
+        player.fighter.heal(player.fighter.max_hp // 2)
 
-    message_log.add_message(Message('You take a moment to rest, and recover your strength.',
-                                    constants['colors'].get('light_violet')))
+        message_log.add_message(Message('You take a moment to rest, and recover your strength.',
+                                        constants['colors'].get('light_violet')))
 
     return game_map, entities
 
