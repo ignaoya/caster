@@ -91,7 +91,9 @@ def place_entities(room, entities, dungeon_level, colors, lexicon):
             'small_mana_potion': 10,
             'healing_potion': from_dungeon_level([[5,2], [10,4], [20, 6]], dungeon_level),
             'mana_potion': from_dungeon_level([[5,3], [10, 4], [20,6]], dungeon_level),
+            'short_sword': from_dungeon_level([[20, 2]], dungeon_level),
             'sword': from_dungeon_level([[5,4]], dungeon_level),
+            'small_shield': from_dungeon_level([[20, 4]], dungeon_level),
             'shield': from_dungeon_level([[15, 8]], dungeon_level),
             'fire_scroll': from_dungeon_level([[35, 3]], dungeon_level),
             'lightning_scroll': from_dungeon_level([[35, 1]], dungeon_level),
@@ -110,10 +112,14 @@ def place_entities(room, entities, dungeon_level, colors, lexicon):
                                'amount': 50, 'char': '!', 'color': 'red'},
             'mana_potion': {'name': 'Mana Potion', 'item_type': 'potion', 'use_function': restore,
                                   'amount': 10, 'char': '!', 'color': 'blue'},
-            'sword': {'name': 'Sword', 'item_type': 'equipment', 'char': '/', 'color': 'sky', 'bonuses':
+            'short_sword': {'name': 'Short Sword', 'item_type': 'equipment', 'char': '/', 'color': 'sky', 'bonuses':
                 {'power': 3}, 'slot': EquipmentSlots.MAIN_HAND},
-            'shield': {'name': 'Shield', 'item_type': 'equipment', 'char': ']', 'color': 'darker_orange',
+            'sword': {'name': 'Sword', 'item_type': 'equipment', 'char': '/', 'color': 'sky', 'bonuses':
+                {'power': 7}, 'slot': EquipmentSlots.MAIN_HAND},
+            'small_shield': {'name': 'Small Shield', 'item_type': 'equipment', 'char': ']', 'color': 'darker_orange',
                        'bonuses': {'defense': 1}, 'slot': EquipmentSlots.OFF_HAND},
+            'shield': {'name': 'Shield', 'item_type': 'equipment', 'char': ']', 'color': 'darker_orange',
+                       'bonuses': {'defense': 3}, 'slot': EquipmentSlots.OFF_HAND},
             'fire_scroll': {'name': 'Scroll of Fire', 'item_type': 'scroll', 'color':'red', 'char': '#',
                             'words': [i for i in lexicon.keys() if lexicon[i] in ['fireball', 'burn']],
                             'lexicon': lexicon, 'addendum': ['Add cardinal directions to set epicenter', 
@@ -258,16 +264,11 @@ def make_map(game_map, max_rooms, room_min_size, room_max_size, map_width, map_h
 
 def next_floor(player, message_log, dungeon_level, constants, lexicon, direction):
     game_map, entities, player_index = load_floor(dungeon_level)
-    if game_map is not None:
+    if game_map is not None and direction == 'up':
         entities[player_index] = player
-        if direction == 'down':
-            start_loc = [(i.x, i.y) for i in entities if i.name == 'Up Stairs']
-            player.x = start_loc[0][0]
-            player.y = start_loc[0][1]
-        elif direction == 'up':
-            start_loc = [(i.x, i.y) for i in entities if i.name == 'Down Stairs']
-            player.x = start_loc[0][0]
-            player.y = start_loc[0][1]
+        start_loc = [(i.x, i.y) for i in entities if i.name == 'Down Stairs']
+        player.x = start_loc[0][0]
+        player.y = start_loc[0][1]
     else:
         game_map = GameMap(constants['map_width'], constants['map_height'], dungeon_level)
         entities = [player]
