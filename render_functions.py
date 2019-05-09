@@ -59,8 +59,12 @@ def render_all(con, panel, entities, player, game_map, fov_recompute, root_conso
 
     entities_in_render_order = sorted(entities, key=lambda x: x.render_order.value)
     # Draw all entities in the list
-    for entity in entities_in_render_order:
-        draw_entity(con, entity, game_map)
+    if game_state != GameStates.PLAYER_DEAD:
+        for entity in [entity for entity in entities_in_render_order if not entity.ghost]:
+            draw_entity(con, entity, game_map)
+    else:
+        for entity in [entity for entity in entities_in_render_order if entity.ghost]:
+            draw_entity(con, entity, game_map)
 
     root_console.blit(con, 0, 0, screen_width, screen_height, 0, 0)
 

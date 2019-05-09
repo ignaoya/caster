@@ -99,3 +99,30 @@ class AlliedMonster:
                 results.append({'message': Message('The {0} returns to dust.'.format(self.owner.name))})
             
         return results
+
+class GhostMonster:
+    def __init__(self):
+        self.last_target_x = None
+        self.last_target_y = None
+        self.ally = False
+        self.target = None
+    def take_turn(self, target, game_map, entities):
+        results = []
+        monster = self.owner
+        target_allies = [entity for entity in entities if entity.ai and entity.ai.ally]
+        target_allies.append(target)
+        if self.target is None or self.target.name.split()[0] in ['remains', 'dust']:
+            self.target = target
+        for entity in target_allies:
+            if monster.distance_to(entity) < monster.distance_to(self.target):
+                self.target = entity
+
+        if (game_map.fov[monster.x, monster.y] and self.target.fighter.visible) or monster.distance_to(self.target) < 2:
+            self.last_target_x = self.target.x
+            self.last_target_y = self.target.y
+            if monster.distance_to(self.target) >= 2:
+                monster.move_towards(self.target.x, self.target.y, game_map, entities)
+        elif self.last_target_x and self.last_target_y:
+            monster.move_towards(self.last_target_x, self.last_target_y, game_map, entities)
+            
+        return results

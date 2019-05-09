@@ -253,8 +253,14 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
                 player_turn_results.extend(player.inventory.drop_item(item, constants['colors']))
 
         if look_around:
-            seen = ', '.join([entity.name for entity in entities if game_map.fov[entity.x, entity.y] and entity is not player])
-            message_log.add_message(Message('You see: {0}.'.format(seen), constants['colors'].get('white')))
+            if game_state != GameStates.UNDERWORLD:
+                seen = ', '.join([entity.name for entity in entities if game_map.fov[entity.x, entity.y] and entity is not player and
+                                  not entity.ghost])
+                message_log.add_message(Message('You see: {0}.'.format(seen), constants['colors'].get('white')))
+            else:
+                seen = ', '.join([entity.name for entity in entities if game_map.fov[entity.x, entity.y] and entity is not player and
+                                  entity.ghost])
+                message_log.add_message(Message('You see: {0}.'.format(seen), constants['colors'].get('white')))
 
         if cast_spell:
             message_log.add_message(Message('You begin a magic spell incantation.', constants['colors'].get('white')))
@@ -506,7 +512,7 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
         if game_state == GameStates.ENEMY_TURN:
             if player.caster.focus < player.caster.max_focus:
                 player.caster.focus += player.caster.regeneration
-            for entity in entities:
+            for entity in [entity for entity in entities if entity.fighter]:
                 if entity.ai:
                     enemy_turn_results = entity.ai.take_turn(player, game_map, entities)
 
