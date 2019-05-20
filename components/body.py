@@ -102,15 +102,16 @@ class Body:
         self.blood -= amount
 
     def pump_blood(self):
-        if self.heart.state == 1:
+        if self.heart.state.value == 1:
             amount = 10
-        elif self.heart.state == 2:
+        elif self.heart.state.value == 2:
             amount = 5
-        elif self.heart.state == 3:
+        elif self.heart.state.value == 3:
             amount = 3
-        elif self.heart.state == 4:
+        elif self.heart.state.value == 4:
             amount = 1
-        elif self.heart.state == 5:
+        elif self.heart.state.value == 5:
             amount = 0
-        self.blood = max([self.blood + amount, self.max_blood])
+
+        self.blood = min([self.blood + amount, self.max_blood])
 

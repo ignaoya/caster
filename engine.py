@@ -377,6 +377,9 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
             message_log.add_message(Message('You are visible again!'))
             game_state = GameStates.ENEMY_TURN
 
+        for entity in [entity for entity in entities if entity.body]:
+            if entity.body.blood <= 0:
+                player_turn_results.append({'dead': entity})
 
         for player_turn_result in player_turn_results:
             message = player_turn_result.get('message')
@@ -510,6 +513,8 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
                     game_state = GameStates.MAGIC_LEVEL_UP
 
         if game_state == GameStates.ENEMY_TURN:
+            for body in [entity.body for entity in entities if entity.body]:
+                body.take_turn()
             if player.caster.focus < player.caster.max_focus:
                 player.caster.focus += player.caster.regeneration
             for entity in [entity for entity in entities if entity.fighter]:
