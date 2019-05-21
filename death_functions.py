@@ -27,6 +27,7 @@ def kill_monster(monster, entities, colors):
         monster.color = colors.get('white')
         monster.blocks = False
         monster.fighter = None
+        monster.body = None
         monster.ai = None
         monster.name = 'dust of ' + monster.name
         monster.render_order = RenderOrder.CORPSE
@@ -35,6 +36,7 @@ def kill_monster(monster, entities, colors):
         monster.color = colors.get('dark_red')
         monster.blocks = False
         monster.fighter = None
+        monster.body = None
         monster.ai = None
         monster.name = 'remains of ' + monster.name
         monster.render_order = RenderOrder.CORPSE
