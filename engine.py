@@ -208,6 +208,7 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
                 game_state = GameStates.ENEMY_TURN
 
         elif wait and game_state == GameStates.PLAYERS_TURN:
+            player.body.pump_blood()
             for entity in entities:
                 if entity.fountain and entity.x == player.x and entity.y == player.y:
                     if entity.fountain.water:
@@ -507,6 +508,8 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
             if player.caster.focus < player.caster.max_focus:
                 player.caster.focus += player.caster.regeneration
             for entity in entities:
+                if entity.body:
+                    entity.body.take_turn()
                 if entity.ai:
                     enemy_turn_results = entity.ai.take_turn(player, game_map, entities)
 

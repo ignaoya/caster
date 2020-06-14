@@ -139,7 +139,6 @@ def cast_raise_skeleton(*args, **kwargs):
     for entity in entities:
         if entity.name.split()[0] == "remains" and game_map.fov[entity.x, entity.y]:
             distance = caster.distance_to(entity)
-
             if distance < closest_distance:
                 target = entity
                 closest_distance = distance

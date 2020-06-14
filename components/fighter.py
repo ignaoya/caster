@@ -52,7 +52,8 @@ class Fighter:
                 dam_level = randint(2,4)
             results.extend(choice(self.owner.body.organs).reduce_state(dam_level))
 
-        if any(i for i in self.owner.body.organs if i.state == OrganStates.LOST and i.vital):
+        if any(i for i in self.owner.body.organs if i.state == OrganStates.LOST and i.vital) or (self.owner.body.blooded and 
+                                                                                                 self.owner.body.blood < 1):
             results.append({'dead': self.owner})
 
         return results
