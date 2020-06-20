@@ -505,12 +505,25 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
                     game_state = GameStates.MAGIC_LEVEL_UP
 
         if game_state == GameStates.ENEMY_TURN:
+
             if player.caster.focus < player.caster.max_focus:
                 player.caster.focus += player.caster.regeneration
             for entity in entities:
-                if entity.body:
-                    entity.body.take_turn()
-                if entity.ai:
+                if entity.body and entity.body.alive:
+                    body_turn_result = entity.body.take_turn()
+                    dead_entity = body_turn_result.get('dead')
+                    if dead_entity:
+                        if dead_entity == player:
+                            message, game_state =  kill_player(dead_entity, constants['colors'])
+                        else:
+                            message = kill_monster(dead_entity, entities, constants['colors'])
+
+                        message_log.add_message(message)
+
+                        if game_state == GameStates.PLAYER_DEAD:
+                            break
+
+                if entity.ai and (dead_entity != entity):
                     enemy_turn_results = entity.ai.take_turn(player, game_map, entities)
 
                     for enemy_turn_result in enemy_turn_results:

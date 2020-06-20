@@ -4,6 +4,7 @@ from components.organ_states import OrganStates
 class Body:
     def __init__(self, body_type, max_blood=100):
         self.organs = [] 
+        self.alive = True
         if body_type == 'anthropod':
             self.blooded = True
             self.max_blood = max_blood
@@ -69,6 +70,7 @@ class Body:
             self.organs.extend([self.l_arm, self.r_arm, self.heart, self.brain, self.l_eyes, self.r_eyes, 
                                 self.l_ear, self.r_ear, self.stomach, self.lungs, self.liver, self.kidneys])
         elif body_type == 'anthropod_skeleton':
+            self.alive = False
             self.blooded = False
             self.max_blood = 0
             self.blood = max_blood
@@ -84,6 +86,7 @@ class Body:
             self.skull.owner = self
             self.organs.extend([self.l_arm, self.r_arm, self.l_leg, self.r_leg, self.skull])
         elif body_type == 'octopod_skeleton':
+            self.alive = False
             self.blooded = False
             self.max_blood = 0
             self.blood = max_blood
@@ -98,6 +101,10 @@ class Body:
         for i in self.organs:
             if i.state.value > 2:
                 self.bleed(i.state.value)
+        if (self.blooded and self.blood < 1):
+            return {'dead': self.owner}
+        else:
+            return {}
 
     def bleed(self, amount):
         self.blood -= amount

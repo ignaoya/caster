@@ -22,6 +22,7 @@ def kill_monster(monster, entities, colors):
         monster.blocks = False
         monster.fighter = None
         monster.ai = None
+        monster.body = None
         monster.name = 'dust of ' + monster.name
         monster.render_order = RenderOrder.CORPSE
     else:
@@ -30,6 +31,7 @@ def kill_monster(monster, entities, colors):
         monster.blocks = False
         monster.fighter = None
         monster.ai = None
+        monster.body.alive = False
         monster.name = 'remains of ' + monster.name
         monster.render_order = RenderOrder.CORPSE
 
