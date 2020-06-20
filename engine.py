@@ -118,7 +118,7 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
     message_log.add_message(Message("Press '?' for Help Screen"))
 
     #uncomment the next line to facilitate manual testing of new spells
-    #print(lexicon)
+    print(lexicon)
 
     while not tdl.event.is_window_closed():
         if fov_recompute:
@@ -510,20 +510,24 @@ def play_game(player, entities, game_map, message_log, game_state, root_console,
                 player.caster.focus += player.caster.regeneration
             for entity in entities:
                 if entity.body and entity.body.alive:
-                    body_turn_result = entity.body.take_turn()
-                    dead_entity = body_turn_result.get('dead')
-                    if dead_entity:
-                        if dead_entity == player:
-                            message, game_state =  kill_player(dead_entity, constants['colors'])
-                        else:
-                            message = kill_monster(dead_entity, entities, constants['colors'])
+                    body_turn_results = entity.body.take_turn()
+                    for result in body_turn_results:
+                        dead_entity = result.get('dead')
+                        message = result.get('message')
+                        if dead_entity:
+                            if dead_entity == player:
+                                message, game_state =  kill_player(dead_entity, constants['colors'])
+                            else:
+                                message = kill_monster(dead_entity, entities, constants['colors'])
 
-                        message_log.add_message(message)
+                            message_log.add_message(message)
 
-                        if game_state == GameStates.PLAYER_DEAD:
-                            break
+                            if game_state == GameStates.PLAYER_DEAD:
+                                break
+                        if message:
+                            message_log.add_message(message)
 
-                if entity.ai and (dead_entity != entity):
+                if entity.ai and entity.body.animated:
                     enemy_turn_results = entity.ai.take_turn(player, game_map, entities)
 
                     for enemy_turn_result in enemy_turn_results:

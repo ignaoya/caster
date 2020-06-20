@@ -1,10 +1,13 @@
 from components.organs import Organ
 from components.organ_states import OrganStates
+from game_messages import Message
 
 class Body:
     def __init__(self, body_type, max_blood=100):
         self.organs = [] 
         self.alive = True
+        self.animated = True
+        self.body_type = body_type
         if body_type == 'anthropod':
             self.blooded = True
             self.max_blood = max_blood
@@ -95,16 +98,25 @@ class Body:
             self.r_arm = Organ('four right legs')
             self.r_arm.owner = self
             self.skull = Organ('skull', vital=True)
+            self.skull.owner = self
             self.organs.extend([self.l_arm, self.r_arm, self.skull])
 
     def take_turn(self):
+        results = []
+        blood_loss = 0
         for i in self.organs:
             if i.state.value > 2:
-                self.bleed(i.state.value)
+                blood_loss += (i.state.value)
+        if blood_loss > 0:
+            results.append({'message': Message('{0} loses {1} liters of blood.'.format(
+                self.owner.name.capitalize(), blood_loss))})
+            self.bleed(blood_loss)
         if (self.blooded and self.blood < 1):
-            return {'dead': self.owner}
-        else:
-            return {}
+            results.append({'message': Message('{0} lost too much blood.'.format(
+                self.owner.name.capitalize()))})
+            results.append({'dead': self.owner})
+
+        return results
 
     def bleed(self, amount):
         self.blood -= amount

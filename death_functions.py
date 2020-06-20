@@ -3,6 +3,7 @@ from render_functions import RenderOrder
 from game_states import GameStates
 from components.fighter import Fighter
 from components.ai import AlliedMonster, ConfusedMonster, BasicMonster
+from components.body import Body
 from map_utils import monsters
 
 
@@ -32,6 +33,7 @@ def kill_monster(monster, entities, colors):
         monster.fighter = None
         monster.ai = None
         monster.body.alive = False
+        monster.body.animated = False
         monster.name = 'remains of ' + monster.name
         monster.render_order = RenderOrder.CORPSE
 
@@ -53,8 +55,11 @@ def raise_monster_skeleton(monster, life_turns, entities, colors):
     #basic_ai.owner = monster
     ai_component = AlliedMonster(life_turns)
     ai_component.owner = monster
+    body_component = Body(body_type = monster.body.body_type + '_skeleton')
+    body_component.owner = monster
     monster.fighter = fighter_component
     monster.ai = ai_component
+    monster.body = body_component
     monster.name = ' '.join([origin, 'skeleton'])
     monster.render_order = RenderOrder.ACTOR
 
