@@ -106,7 +106,7 @@ class Body:
         blood_loss = 0
         for i in self.organs:
             if i.state.value > 2:
-                blood_loss += (i.state.value)
+                blood_loss += i.state.value - 2
         if blood_loss > 0:
             results.append({'message': Message('{0} loses {1} liters of blood.'.format(
                 self.owner.name.capitalize(), blood_loss))})
@@ -123,12 +123,15 @@ class Body:
 
     def pump_blood(self):
         if self.heart.state == OrganStates.PERFECT:
-            amount = 5
+            amount = 10
         elif self.heart.state == OrganStates.WEAK:
-            amount = 3
+            amount = 7
         elif self.heart.state == OrganStates.BLEEDING:
-            amount = 2
+            amount = 5
         elif self.heart.state == OrganStates.BROKEN:
-            amount = 1
+            amount = 2
         self.blood = min([self.blood + amount, self.max_blood])
+        for i in self.organs:
+            if i.wound:
+                i.wound.repair()
 
