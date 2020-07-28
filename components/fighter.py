@@ -39,11 +39,11 @@ class Fighter:
 
         return (self.base_defense + bonus) // self.owner.body.l_arm.state.value
 
-    def take_damage(self, amount):
+    def take_damage(self, amount, ):
         results = []
 
-        organ_dam_prob = ((self.max_hp - self.hp) / self.max_hp) * 100
         self.hp = max([self.hp - amount, 0])
+        organ_dam_prob = ((self.max_hp - self.hp) / self.max_hp) * 100
 
         if randint(1, 100) <= organ_dam_prob:
             if organ_dam_prob < 100:
