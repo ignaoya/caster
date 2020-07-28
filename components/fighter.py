@@ -39,11 +39,11 @@ class Fighter:
 
         return (self.base_defense + bonus) // self.owner.body.l_arm.state.value
 
-    def take_damage(self, amount):
+    def take_damage(self, amount, ):
         results = []
 
-        organ_dam_prob = ((self.max_hp - self.hp) / self.max_hp) * 100
         self.hp = max([self.hp - amount, 0])
+        organ_dam_prob = ((self.max_hp - self.hp) / self.max_hp) * 100
 
         if randint(1, 100) <= organ_dam_prob:
             if organ_dam_prob < 100:
@@ -52,7 +52,8 @@ class Fighter:
                 dam_level = randint(2,4)
             results.extend(choice(self.owner.body.organs).reduce_state(dam_level))
 
-        if any(i for i in self.owner.body.organs if i.state == OrganStates.LOST and i.vital):
+        if any(i for i in self.owner.body.organs if i.state == OrganStates.LOST and i.vital) or (self.owner.body.blooded and 
+                                                                                                 self.owner.body.blood < 1):
             results.append({'dead': self.owner})
 
         return results
